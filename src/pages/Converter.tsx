@@ -19,7 +19,7 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
   })
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => { inputRef.current?.focus() }, [])
+  // Don't auto-focus on mobile to avoid keyboard popup
   useEffect(() => { localStorage.setItem('weight-converter-history', JSON.stringify(history)) }, [history])
 
   function addToHistory(val: string, u: 'lb' | 'kg') {
