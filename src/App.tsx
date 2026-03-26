@@ -27,7 +27,8 @@ function App() {
   const containerRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [pill, setPill] = useState({ left: 0, width: 0 })
-  const [pillReady, setPillReady] = useState(false)
+  const [pillAnimating, setPillAnimating] = useState(false)
+  const mountedRef = useRef(false)
   const [dragging, setDragging] = useState(false)
   const [dragX, setDragX] = useState(0)
   const [stretch, setStretch] = useState(0)
@@ -37,25 +38,46 @@ function App() {
     localStorage.setItem('wc-dark-mode', String(darkMode))
   }, [darkMode])
 
-  // Update pill position when tab changes
-  const updatePill = useCallback(() => {
-    const idx = TABS.findIndex(t => t.id === tab)
+  // Measure pill position for a given tab
+  const measureTab = useCallback((tabId: Tab) => {
+    const idx = TABS.findIndex(t => t.id === tabId)
     const el = tabRefs.current[idx]
     const parent = containerRef.current
     if (el && parent) {
       const pRect = parent.getBoundingClientRect()
       const eRect = el.getBoundingClientRect()
-      setPill({ left: eRect.left - pRect.left, width: eRect.width })
-      // After first measurement, enable transitions
-      requestAnimationFrame(() => setPillReady(true))
+      return { left: eRect.left - pRect.left, width: eRect.width }
     }
-  }, [tab])
+    return null
+  }, [])
 
+  // On mount: measure immediately, no animation
   useEffect(() => {
-    updatePill()
-    window.addEventListener('resize', updatePill)
-    return () => window.removeEventListener('resize', updatePill)
-  }, [updatePill])
+    const pos = measureTab(tab)
+    if (pos) setPill(pos)
+    // Enable animation after first paint
+    requestAnimationFrame(() => {
+      mountedRef.current = true
+    })
+    const onResize = () => {
+      const pos = measureTab(tab)
+      if (pos) setPill(pos)
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // On tab change: animate pill to new position
+  useEffect(() => {
+    if (!mountedRef.current) return
+    setPillAnimating(true)
+    // Measure after render so refs are up to date
+    requestAnimationFrame(() => {
+      const pos = measureTab(tab)
+      if (pos) setPill(pos)
+    })
+  }, [tab, measureTab])
 
   // Get tab index from X position
   const getTabIdxFromX = useCallback((clientX: number) => {
@@ -164,7 +186,7 @@ function App() {
             {/* Liquid glass sliding pill */}
             <div
               className={`absolute top-[5px] bottom-[5px] rounded-[15px] pointer-events-none ${
-                !pillReady || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
+                !pillAnimating || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
               }`}
               style={{
                 left: pillLeft + 4,
@@ -184,7 +206,7 @@ function App() {
             {/* Subtle refraction highlight on pill */}
             <div
               className={`absolute pointer-events-none rounded-[15px] ${
-                !pillReady || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
+                !pillAnimating || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
               }`}
               style={{
                 left: pillLeft + 4,
