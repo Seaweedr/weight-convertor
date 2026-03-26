@@ -144,16 +144,15 @@ function App() {
       </div>
 
       {/* Liquid Glass Tab Bar */}
-      <nav className={`flex-shrink-0 pb-[env(safe-area-inset-bottom)] ${
-        darkMode ? 'bg-black' : 'bg-zinc-100'
-      }`}>
-        <div className="px-3 pt-1.5 pb-2">
+      <nav className={`flex-shrink-0 ${darkMode ? 'bg-black' : 'bg-zinc-100'}`}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="px-2 py-1">
           <div
             ref={containerRef}
-            className={`relative rounded-[20px] overflow-hidden select-none touch-none ${
+            className={`relative rounded-2xl overflow-hidden select-none touch-none ${
               darkMode
-                ? 'bg-white/[0.05] border border-white/[0.08] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),inset_0_-1px_0_0_rgba(255,255,255,0.02)]'
-                : 'bg-white/50 border border-white/70 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.8),0_2px_12px_-4px_rgba(0,0,0,0.08)]'
+                ? 'bg-white/[0.06] border border-white/[0.08]'
+                : 'bg-white/50 border border-white/70 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.08)]'
             }`}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
