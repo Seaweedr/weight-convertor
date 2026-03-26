@@ -135,7 +135,7 @@ function App() {
   return (
     <div className={`h-svh flex flex-col ${bg} transition-colors duration-500`}>
       {/* Page Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="flex-1 min-h-0 overflow-y-auto pt-[env(safe-area-inset-top)]">
         {tab === 'converter' && <Converter darkMode={darkMode} />}
         {tab === 'plates' && <PlateCalc darkMode={darkMode} />}
         {tab === '1rm' && <OneRepMax darkMode={darkMode} />}
@@ -145,8 +145,8 @@ function App() {
 
       {/* Liquid Glass Tab Bar */}
       <nav className={`flex-shrink-0 pb-[env(safe-area-inset-bottom)] ${
-        darkMode ? 'bg-white/[0.02]' : 'bg-white/30'
-      } backdrop-blur-3xl`}>
+        darkMode ? 'bg-black' : 'bg-zinc-100'
+      }`}>
         <div className="px-3 pt-1.5 pb-2">
           <div
             ref={containerRef}
