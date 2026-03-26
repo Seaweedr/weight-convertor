@@ -27,6 +27,7 @@ function App() {
   const containerRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const [pill, setPill] = useState({ left: 0, width: 0 })
+  const [pillReady, setPillReady] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [dragX, setDragX] = useState(0)
   const [stretch, setStretch] = useState(0)
@@ -45,6 +46,8 @@ function App() {
       const pRect = parent.getBoundingClientRect()
       const eRect = el.getBoundingClientRect()
       setPill({ left: eRect.left - pRect.left, width: eRect.width })
+      // After first measurement, enable transitions
+      requestAnimationFrame(() => setPillReady(true))
     }
   }, [tab])
 
@@ -161,7 +164,7 @@ function App() {
             {/* Liquid glass sliding pill */}
             <div
               className={`absolute top-[5px] bottom-[5px] rounded-[15px] pointer-events-none ${
-                dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
+                !pillReady || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
               }`}
               style={{
                 left: pillLeft + 4,
@@ -181,7 +184,7 @@ function App() {
             {/* Subtle refraction highlight on pill */}
             <div
               className={`absolute pointer-events-none rounded-[15px] ${
-                dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
+                !pillReady || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
               }`}
               style={{
                 left: pillLeft + 4,
