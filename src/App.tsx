@@ -31,8 +31,8 @@ function App() {
   }, [darkMode])
 
   const tabIdx = TABS.findIndex(t => t.id === tab)
-  const pillLeft = `${tabIdx * TAB_WIDTH_PCT}%`
-  const pillWidth = `${TAB_WIDTH_PCT}%`
+  // translateX is relative to the pill's own width, so 100% = 1 tab width
+  const pillTranslateX = tabIdx * 100
 
   const bg = darkMode
     ? 'bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 text-white'
@@ -60,10 +60,14 @@ function App() {
                 : 'bg-white/50 border border-white/70 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.08)]'
             }`}
           >
-            {/* Liquid glass sliding pill — uses % positioning, no DOM measurement */}
+            {/* Liquid glass sliding pill — uses transform for reliable animation */}
             <div
-              className="absolute top-[5px] bottom-[5px] transition-[left] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] pointer-events-none"
-              style={{ left: pillLeft, width: pillWidth }}
+              className="absolute top-[5px] bottom-[5px] left-0 pointer-events-none"
+              style={{
+                width: `${TAB_WIDTH_PCT}%`,
+                transform: `translateX(${pillTranslateX}%)`,
+                transition: 'transform 500ms cubic-bezier(0.32, 0.72, 0, 1)',
+              }}
             >
               <div
                 className="absolute inset-x-1 inset-y-0 rounded-[13px]"
