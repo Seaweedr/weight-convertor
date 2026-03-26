@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, type ReactNode } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { MdSwapHoriz, MdFitnessCenter, MdTrendingUp, MdTimer, MdMoreHoriz } from 'react-icons/md'
 import Converter from './pages/Converter'
 import PlateCalc from './pages/PlateCalc'
@@ -16,6 +16,9 @@ const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   { id: 'settings', label: '更多', icon: <MdMoreHoriz size={22} /> },
 ]
 
+const TAB_COUNT = TABS.length
+const TAB_WIDTH_PCT = 100 / TAB_COUNT
+
 function App() {
   const [tab, setTab] = useState<Tab>('converter')
   const [darkMode, setDarkMode] = useState(() => {
@@ -23,135 +26,13 @@ function App() {
     return saved !== null ? saved === 'true' : true
   })
 
-  // Liquid glass indicator state
-  const containerRef = useRef<HTMLDivElement>(null)
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const [pill, setPill] = useState({ left: 0, width: 0 })
-  const [pillAnimating, setPillAnimating] = useState(false)
-  const mountedRef = useRef(false)
-  const [dragging, setDragging] = useState(false)
-  const [dragX, setDragX] = useState(0)
-  const [stretch, setStretch] = useState(0)
-  const dragStartRef = useRef({ x: 0, tabIdx: 0 })
-
   useEffect(() => {
     localStorage.setItem('wc-dark-mode', String(darkMode))
   }, [darkMode])
 
-  // Measure pill position for a given tab
-  const measureTab = useCallback((tabId: Tab) => {
-    const idx = TABS.findIndex(t => t.id === tabId)
-    const el = tabRefs.current[idx]
-    const parent = containerRef.current
-    if (el && parent) {
-      const pRect = parent.getBoundingClientRect()
-      const eRect = el.getBoundingClientRect()
-      return { left: eRect.left - pRect.left, width: eRect.width }
-    }
-    return null
-  }, [])
-
-  // On mount: measure immediately, no animation
-  useEffect(() => {
-    const pos = measureTab(tab)
-    if (pos) setPill(pos)
-    // Enable animation after first paint
-    requestAnimationFrame(() => {
-      mountedRef.current = true
-    })
-    const onResize = () => {
-      const pos = measureTab(tab)
-      if (pos) setPill(pos)
-    }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // On tab change: animate pill to new position
-  useEffect(() => {
-    if (!mountedRef.current) return
-    setPillAnimating(true)
-    // Measure after render so refs are up to date
-    requestAnimationFrame(() => {
-      const pos = measureTab(tab)
-      if (pos) setPill(pos)
-    })
-  }, [tab, measureTab])
-
-  // Get tab index from X position
-  const getTabIdxFromX = useCallback((clientX: number) => {
-    const parent = containerRef.current
-    if (!parent) return 0
-    const pRect = parent.getBoundingClientRect()
-    const relX = clientX - pRect.left
-    for (let i = 0; i < tabRefs.current.length; i++) {
-      const el = tabRefs.current[i]
-      if (el) {
-        const eRect = el.getBoundingClientRect()
-        const elLeft = eRect.left - pRect.left
-        if (relX >= elLeft && relX < elLeft + eRect.width) return i
-      }
-    }
-    return TABS.findIndex(t => t.id === tab)
-  }, [tab])
-
-  // Touch/mouse handlers for dragging
-  const handleDragStart = useCallback((clientX: number) => {
-    setDragging(true)
-    const idx = TABS.findIndex(t => t.id === tab)
-    dragStartRef.current = { x: clientX, tabIdx: idx }
-  }, [tab])
-
-  const handleDragMove = useCallback((clientX: number) => {
-    if (!dragging) return
-    const parent = containerRef.current
-    if (!parent) return
-
-    const pRect = parent.getBoundingClientRect()
-    const relX = clientX - pRect.left
-    const targetIdx = getTabIdxFromX(clientX)
-    const targetEl = tabRefs.current[targetIdx]
-
-    if (targetEl) {
-      const eRect = targetEl.getBoundingClientRect()
-      const targetLeft = eRect.left - pRect.left
-      const targetWidth = eRect.width
-
-      // Calculate how far we are from center of target tab
-      const targetCenter = targetLeft + targetWidth / 2
-      const dist = Math.abs(relX - targetCenter)
-      const maxDist = targetWidth / 2
-
-      // Stretch based on distance from center (clamped)
-      const stretchAmount = Math.min(dist / maxDist, 1) * 16
-      setStretch(stretchAmount)
-      setDragX(targetLeft)
-    }
-  }, [dragging, getTabIdxFromX])
-
-  const handleDragEnd = useCallback((clientX: number) => {
-    if (!dragging) return
-    setDragging(false)
-    setStretch(0)
-
-    const targetIdx = getTabIdxFromX(clientX)
-    setTab(TABS[targetIdx].id)
-  }, [dragging, getTabIdxFromX])
-
-  // Pointer events
-  const onPointerDown = (e: React.PointerEvent) => {
-    (e.target as HTMLElement).setPointerCapture(e.pointerId)
-    handleDragStart(e.clientX)
-  }
-  const onPointerMove = (e: React.PointerEvent) => handleDragMove(e.clientX)
-  const onPointerUp = (e: React.PointerEvent) => handleDragEnd(e.clientX)
-
-  // Calculate pill transform
-  const pillLeft = dragging ? dragX : pill.left
-  const pillWidth = pill.width
-  const scaleX = dragging ? 1 + stretch / pillWidth : 1
-  const pillOpacity = dragging ? 0.18 : 0.12
+  const tabIdx = TABS.findIndex(t => t.id === tab)
+  const pillLeft = `${tabIdx * TAB_WIDTH_PCT}%`
+  const pillWidth = `${TAB_WIDTH_PCT}%`
 
   const bg = darkMode
     ? 'bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 text-white'
@@ -173,62 +54,49 @@ function App() {
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="px-2 py-1">
           <div
-            ref={containerRef}
-            className={`relative rounded-2xl overflow-hidden select-none touch-none ${
+            className={`relative rounded-2xl overflow-hidden ${
               darkMode
                 ? 'bg-white/[0.06] border border-white/[0.08]'
                 : 'bg-white/50 border border-white/70 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.08)]'
             }`}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
           >
-            {/* Liquid glass sliding pill */}
+            {/* Liquid glass sliding pill — uses % positioning, no DOM measurement */}
             <div
-              className={`absolute top-[5px] bottom-[5px] rounded-[15px] pointer-events-none ${
-                !pillAnimating || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
-              }`}
-              style={{
-                left: pillLeft + 4,
-                width: pillWidth - 8,
-                transform: `scaleX(${scaleX})`,
-                background: darkMode
-                  ? `rgba(255,255,255,${pillOpacity})`
-                  : `rgba(255,255,255,${dragging ? 0.9 : 0.8})`,
-                boxShadow: darkMode
-                  ? `inset 0 1px 0 0 rgba(255,255,255,0.15), inset 0 -1px 0 0 rgba(255,255,255,0.05), 0 0 ${dragging ? 20 : 10}px ${dragging ? 4 : 2}px rgba(255,255,255,0.04)`
-                  : `inset 0 1px 0 0 rgba(255,255,255,1), 0 2px ${dragging ? 12 : 6}px ${dragging ? -1 : -2}px rgba(0,0,0,${dragging ? 0.12 : 0.08})`,
-                border: darkMode ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.9)',
-                backdropFilter: 'blur(20px)',
-              }}
-            />
-
-            {/* Subtle refraction highlight on pill */}
-            <div
-              className={`absolute pointer-events-none rounded-[15px] ${
-                !pillAnimating || dragging ? '' : 'transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]'
-              }`}
-              style={{
-                left: pillLeft + 4,
-                width: pillWidth - 8,
-                top: 5,
-                height: '45%',
-                transform: `scaleX(${scaleX})`,
-                background: darkMode
-                  ? 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%)'
-                  : 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%)',
-                borderRadius: '15px 15px 50% 50%',
-              }}
-            />
+              className="absolute top-[5px] bottom-[5px] transition-[left] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] pointer-events-none"
+              style={{ left: pillLeft, width: pillWidth }}
+            >
+              <div
+                className="absolute inset-x-1 inset-y-0 rounded-[13px]"
+                style={{
+                  background: darkMode
+                    ? 'rgba(255,255,255,0.12)'
+                    : 'rgba(255,255,255,0.8)',
+                  boxShadow: darkMode
+                    ? 'inset 0 1px 0 0 rgba(255,255,255,0.15), inset 0 -1px 0 0 rgba(255,255,255,0.05), 0 0 10px 2px rgba(255,255,255,0.04)'
+                    : 'inset 0 1px 0 0 rgba(255,255,255,1), 0 2px 6px -2px rgba(0,0,0,0.08)',
+                  border: darkMode ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.9)',
+                  backdropFilter: 'blur(20px)',
+                }}
+              />
+              {/* Refraction highlight */}
+              <div
+                className="absolute inset-x-1 top-0 h-[45%] rounded-t-[13px]"
+                style={{
+                  background: darkMode
+                    ? 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%)'
+                    : 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%)',
+                  borderRadius: '13px 13px 50% 50%',
+                }}
+              />
+            </div>
 
             {/* Tab buttons */}
             <div className="relative flex">
-              {TABS.map((t, i) => {
+              {TABS.map((t) => {
                 const isActive = tab === t.id
                 return (
                   <button
                     key={t.id}
-                    ref={el => { tabRefs.current[i] = el }}
                     onClick={() => setTab(t.id)}
                     className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-3.5 text-[10px] font-medium tracking-wide cursor-pointer relative z-10 transition-all duration-300 ${
                       isActive
