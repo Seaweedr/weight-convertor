@@ -76,8 +76,8 @@ function App() {
   const dimColor = darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
   const brightColor = darkMode ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,0.85)'
 
-  // Pill morphs: when pressing, pill gets taller and more opaque
-  const pillScale = dragging ? 'scaleY(1.2) scaleX(1.05)' : 'scaleY(1) scaleX(1)'
+  // Pill morphs: when pressing, pill expands horizontally (wider capsule)
+  const pillScale = dragging ? 'scaleX(1.15)' : 'scaleX(1)'
   const pillBg = darkMode
     ? (dragging ? 'rgba(50,50,60,0.95)' : 'rgba(255,255,255,0.08)')
     : (dragging ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.55)')
@@ -144,8 +144,8 @@ function App() {
               className="absolute left-0 pointer-events-none"
               style={{
                 width: `${pillWidthPct}%`,
-                top: dragging ? -6 : 3,
-                bottom: dragging ? -6 : 3,
+                top: dragging ? 1 : 3,
+                bottom: dragging ? 1 : 3,
                 transform: `translateX(${translateX}%) ${pillScale}`,
                 transition: dragging ? 'top 200ms, bottom 200ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), top 200ms, bottom 200ms',
               }}
