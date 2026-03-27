@@ -111,7 +111,7 @@ function App() {
             ref={containerRef}
             className="relative rounded-full select-none touch-none"
             style={{
-              background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.45)',
+              background: darkMode ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.15)',
               backdropFilter: 'blur(40px) saturate(1.6)',
               WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
               border: darkMode ? '0.5px solid rgba(255,255,255,0.08)' : '0.5px solid rgba(255,255,255,0.65)',
