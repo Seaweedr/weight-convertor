@@ -49,7 +49,7 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
 
       <div className={`w-full max-w-sm rounded-3xl p-5 space-y-3 ${glass(darkMode)}`}>
         {/* Input */}
-        <div className="relative">
+        <div className={`relative rounded-2xl ${darkMode ? 'bg-white/[0.06]' : 'bg-black/[0.04]'}`}>
           <input
             ref={inputRef}
             type="number"
@@ -59,9 +59,9 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
             onBlur={() => addToHistory(inputValue, unit)}
             onKeyDown={e => { if (e.key === 'Enter') addToHistory(inputValue, unit) }}
             placeholder="0"
-            className={`w-full text-4xl font-semibold text-center rounded-2xl py-4 px-14 outline-none transition-shadow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${inputStyle(darkMode)}`}
+            className={`w-full text-4xl font-semibold text-center rounded-2xl py-5 px-14 outline-none bg-transparent transition-shadow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${darkMode ? 'text-white placeholder:text-white/25' : 'text-zinc-900 placeholder:text-zinc-400'}`}
           />
-          <span className={`absolute right-5 top-1/2 -translate-y-1/2 text-sm font-medium uppercase ${s}`}>{unit}</span>
+          <span className={`absolute right-5 top-1/2 -translate-y-1/2 text-base font-semibold uppercase ${s}`}>{unit}</span>
         </div>
 
         {/* Swap */}
@@ -74,11 +74,13 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
         </div>
 
         {/* Output */}
-        <div className={`rounded-2xl py-4 px-4 text-center ${darkMode ? 'bg-white/[0.04]' : 'bg-black/[0.03]'}`}>
-          <div className={`text-4xl font-semibold ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
-            {converted !== null ? formatNumber(converted) : '—'}
+        <div className={`relative rounded-2xl ${darkMode ? 'bg-white/[0.06]' : 'bg-black/[0.04]'}`}>
+          <div className="py-5 px-14 text-center">
+            <div className={`text-4xl font-semibold ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
+              {converted !== null ? formatNumber(converted) : '—'}
+            </div>
           </div>
-          <div className={`text-sm font-medium uppercase mt-1 ${s}`}>{outputUnit}</div>
+          <span className={`absolute right-5 top-1/2 -translate-y-1/2 text-base font-semibold uppercase ${s}`}>{outputUnit}</span>
         </div>
       </div>
 
