@@ -39,9 +39,9 @@ function App() {
     : 'bg-gradient-to-b from-zinc-100 via-white to-zinc-100 text-zinc-900'
 
   return (
-    <div className={`h-svh flex flex-col ${bg} transition-colors duration-500`}>
+    <div className={`h-svh ${bg} transition-colors duration-500`}>
       {/* Page Content */}
-      <div className="flex-1 min-h-0 overflow-y-auto pt-[env(safe-area-inset-top)]">
+      <div className="h-full overflow-y-auto pt-[env(safe-area-inset-top)] pb-16">
         {tab === 'converter' && <Converter darkMode={darkMode} />}
         {tab === 'plates' && <PlateCalc darkMode={darkMode} />}
         {tab === '1rm' && <OneRepMax darkMode={darkMode} />}
@@ -49,8 +49,8 @@ function App() {
         {tab === 'settings' && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
       </div>
 
-      {/* Liquid Glass Tab Bar */}
-      <nav className="flex-shrink-0">
+      {/* Liquid Glass Tab Bar — fixed to bottom */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50">
         <div className="px-2 pb-0.5">
           <div
             className={`relative rounded-xl overflow-hidden ${
