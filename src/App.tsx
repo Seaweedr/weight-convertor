@@ -78,22 +78,37 @@ function App() {
 
   // Pill morphs: when pressing, pill expands horizontally (wider capsule)
   const pillScale = dragging ? 'scaleX(1.15)' : 'scaleX(1)'
+  // Glass material — thick glass look
   const pillBg = darkMode
-    ? (dragging ? 'rgba(50,50,60,0.95)' : 'rgba(255,255,255,0.08)')
-    : (dragging ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.55)')
+    ? (dragging ? 'rgba(60,60,70,0.6)' : 'rgba(255,255,255,0.06)')
+    : (dragging ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.35)')
   const pillBlur = dragging
-    ? `blur(40px) brightness(${darkMode ? 1.8 : 1.1}) saturate(2.5)`
-    : `blur(20px) brightness(${darkMode ? 1.3 : 1.02}) saturate(1.8)`
+    ? `blur(2px) brightness(${darkMode ? 2 : 1.15}) saturate(2)`
+    : `blur(2px) brightness(${darkMode ? 1.4 : 1.05}) saturate(1.6)`
+  // Thick glass edge: multiple inset shadows simulate rim depth
   const pillShadow = darkMode
     ? (dragging
-      ? 'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -0.5px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.15), 0 12px 32px -4px rgba(0,0,0,0.7), 0 0 20px rgba(255,255,255,0.04)'
-      : 'inset 0 0.5px 0 rgba(255,255,255,0.15), 0 0 0 0.5px rgba(255,255,255,0.08)')
+      ? `inset 0 0 0 2px rgba(255,255,255,0.12),
+         inset 0 1px 0 rgba(255,255,255,0.3),
+         inset 0 -1px 0 rgba(255,255,255,0.06),
+         0 0 0 1px rgba(0,0,0,0.5),
+         0 4px 16px rgba(0,0,0,0.5),
+         0 12px 40px -8px rgba(0,0,0,0.4)`
+      : `inset 0 0 0 1.5px rgba(255,255,255,0.08),
+         inset 0 0.5px 0 rgba(255,255,255,0.15),
+         0 0 0 0.5px rgba(0,0,0,0.3),
+         0 2px 8px rgba(0,0,0,0.2)`)
     : (dragging
-      ? 'inset 0 1px 0 rgba(255,255,255,1), 0 2px 8px rgba(0,0,0,0.12), 0 12px 32px -4px rgba(0,0,0,0.12)'
-      : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 1px 4px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(255,255,255,0.5)')
-  const pillBorder = darkMode
-    ? (dragging ? '1px solid rgba(255,255,255,0.22)' : '0.5px solid rgba(255,255,255,0.1)')
-    : (dragging ? '1px solid rgba(255,255,255,0.95)' : '0.5px solid rgba(255,255,255,0.6)')
+      ? `inset 0 0 0 2px rgba(255,255,255,0.5),
+         inset 0 1px 0 rgba(255,255,255,0.9),
+         0 0 0 1px rgba(0,0,0,0.06),
+         0 4px 16px rgba(0,0,0,0.1),
+         0 12px 40px -8px rgba(0,0,0,0.08)`
+      : `inset 0 0 0 1.5px rgba(255,255,255,0.4),
+         inset 0 0.5px 0 rgba(255,255,255,0.8),
+         0 0 0 0.5px rgba(0,0,0,0.04),
+         0 2px 8px rgba(0,0,0,0.05)`)
+  const pillBorder = 'none' // border replaced by inset shadows for thick glass look
 
   return (
     <div className={`h-svh ${bg}`}>
@@ -157,9 +172,8 @@ function App() {
                   backdropFilter: pillBlur,
                   WebkitBackdropFilter: pillBlur,
                   boxShadow: pillShadow,
-                  border: pillBorder,
                   transition: dragging
-                    ? 'background 150ms, border-radius 200ms, box-shadow 150ms, border 150ms'
+                    ? 'background 150ms, box-shadow 150ms, backdrop-filter 150ms'
                     : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
                 {/* Specular highlight — top white shine */}
