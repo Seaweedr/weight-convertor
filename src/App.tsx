@@ -112,7 +112,7 @@ function App() {
         <div className="px-3 pb-1">
           <div
             ref={containerRef}
-            className="relative rounded-2xl overflow-hidden select-none touch-none"
+            className="relative rounded-2xl select-none touch-none"
             style={{
               background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.45)',
               backdropFilter: 'blur(40px) saturate(1.6)',
