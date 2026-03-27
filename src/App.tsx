@@ -225,17 +225,8 @@ function App() {
                 {TABS.map((t) => (
                   <div key={t.id} className="flex-1 flex flex-col items-center justify-center gap-1"
                     style={{ color: brightColor }}>
-                    <span className="flex" style={{
-                      transform: dragging ? 'scale(1.25)' : 'scale(1.1)',
-                      filter: dragging ? (darkMode ? 'drop-shadow(0 0 8px rgba(255,255,255,0.3))' : 'drop-shadow(0 0 6px rgba(0,0,0,0.15))') : 'none',
-                      transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), filter 200ms',
-                    }}>{t.filled}</span>
-                    <span style={{
-                      fontSize: dragging ? 11 : 10,
-                      fontWeight: 600,
-                      letterSpacing: '0.02em',
-                      transition: 'font-size 200ms',
-                    }}>{t.label}</span>
+                    <span className="flex">{t.filled}</span>
+                    <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.02em' }}>{t.label}</span>
                   </div>
                 ))}
               </div>
