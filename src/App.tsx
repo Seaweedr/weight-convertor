@@ -21,11 +21,6 @@ const TABS: { id: Tab; label: string; filled: ReactNode; outlined: ReactNode }[]
 
 const TAB_COUNT = TABS.length
 
-function getGlassOverlap(tabIndex: number, pillPos: number): number {
-  const dist = Math.abs(tabIndex - pillPos)
-  return dist >= 1 ? 0 : 1 - dist
-}
-
 function App() {
   const [tab, setTab] = useState<Tab>('converter')
   const [darkMode, setDarkMode] = useState(() => {
@@ -43,10 +38,16 @@ function App() {
 
   const tabIdx = TABS.findIndex(t => t.id === tab)
   const pillPos = dragging && dragProgress !== null ? dragProgress : tabIdx
-  const nearestTab = Math.round(pillPos)
-  const distFromCenter = Math.abs(pillPos - nearestTab)
+  const distFromCenter = Math.abs(pillPos - Math.round(pillPos))
   const stretchScale = dragging ? 1 + distFromCenter * 0.35 : 1
   const translateX = pillPos * 100
+
+  // Pill pixel position for clip-path (percentage based)
+  const pillLeftPct = (pillPos / TAB_COUNT) * 100
+  const pillWidthPct = 100 / TAB_COUNT
+  const clipLeft = pillLeftPct + 0.8  // inset for padding
+  const clipRight = 100 - (pillLeftPct + pillWidthPct) + 0.8
+  const clipInset = `3px ${clipRight}% 3px ${clipLeft}%`
 
   function clientXToProgress(clientX: number): number {
     const el = containerRef.current
@@ -77,6 +78,9 @@ function App() {
     ? 'bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 text-white'
     : 'bg-gradient-to-b from-zinc-100 via-white to-zinc-100 text-zinc-900'
 
+  const dimColor = darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
+  const brightColor = darkMode ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,0.85)'
+
   return (
     <div className={`h-svh ${bg} transition-colors duration-500`}>
       <div className="h-full overflow-y-auto pt-[env(safe-area-inset-top)] pb-16">
@@ -94,14 +98,10 @@ function App() {
             ref={containerRef}
             className="relative rounded-2xl overflow-hidden select-none touch-none"
             style={{
-              background: darkMode
-                ? 'rgba(38,38,40,0.65)'
-                : 'rgba(255,255,255,0.55)',
+              background: darkMode ? 'rgba(30,30,32,0.7)' : 'rgba(255,255,255,0.5)',
               backdropFilter: 'blur(50px) saturate(1.8)',
               WebkitBackdropFilter: 'blur(50px) saturate(1.8)',
-              border: darkMode
-                ? '0.5px solid rgba(255,255,255,0.08)'
-                : '0.5px solid rgba(255,255,255,0.6)',
+              border: darkMode ? '0.5px solid rgba(255,255,255,0.08)' : '0.5px solid rgba(255,255,255,0.6)',
               boxShadow: darkMode
                 ? 'inset 0 0.5px 0 rgba(255,255,255,0.06), 0 -2px 20px rgba(0,0,0,0.3)'
                 : 'inset 0 0.5px 0 rgba(255,255,255,0.8), 0 -2px 20px rgba(0,0,0,0.06)',
@@ -111,7 +111,7 @@ function App() {
             onPointerUp={onPointerUp}
             onPointerCancel={() => { setDragging(false); setDragProgress(null) }}
           >
-            {/* Glass pill indicator */}
+            {/* Glass pill */}
             <div
               className="absolute top-[3px] bottom-[3px] left-0 pointer-events-none"
               style={{
@@ -123,111 +123,75 @@ function App() {
               <div
                 className="absolute inset-x-[3px] inset-y-0 rounded-[12px] overflow-hidden"
                 style={{
-                  background: darkMode
-                    ? 'rgba(255,255,255,0.1)'
-                    : 'rgba(255,255,255,0.6)',
-                  backdropFilter: `blur(20px) brightness(${darkMode ? 1.4 : 1.05}) saturate(2)`,
-                  WebkitBackdropFilter: `blur(20px) brightness(${darkMode ? 1.4 : 1.05}) saturate(2)`,
+                  background: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.55)',
+                  backdropFilter: `blur(20px) brightness(${darkMode ? 1.35 : 1.02}) saturate(2)`,
+                  WebkitBackdropFilter: `blur(20px) brightness(${darkMode ? 1.35 : 1.02}) saturate(2)`,
                   boxShadow: darkMode
-                    ? `inset 0 0.5px 0 rgba(255,255,255,0.2),
-                       inset 0 -0.5px 0 rgba(255,255,255,0.05),
-                       0 0 0 0.5px rgba(255,255,255,0.1)`
-                    : `inset 0 0.5px 0 rgba(255,255,255,0.9),
-                       inset 0 -0.5px 0 rgba(0,0,0,0.03),
-                       0 1px 4px rgba(0,0,0,0.08),
-                       0 0 0 0.5px rgba(255,255,255,0.7)`,
-                  transition: dragging ? 'backdrop-filter 60ms' : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
+                    ? 'inset 0 0.5px 0 rgba(255,255,255,0.18), 0 0 0 0.5px rgba(255,255,255,0.08)'
+                    : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 1px 4px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(255,255,255,0.6)',
                 }}
               >
-                {/* Top rim specular highlight */}
-                <div className="absolute inset-x-0 top-0 h-[1px] pointer-events-none"
-                  style={{
-                    background: darkMode
-                      ? 'linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.25) 30%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.25) 70%, transparent 90%)'
-                      : 'linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.8) 30%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.8) 70%, transparent 90%)',
-                  }}
-                />
-                {/* Bottom rim */}
-                <div className="absolute inset-x-0 bottom-0 h-[1px] pointer-events-none"
-                  style={{
-                    background: darkMode
-                      ? 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.06) 50%, transparent 85%)'
-                      : 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.4) 50%, transparent 85%)',
-                  }}
-                />
-                {/* Left/Right rim highlights */}
-                <div className="absolute inset-y-0 left-0 w-[1px] pointer-events-none"
-                  style={{
-                    background: darkMode
-                      ? 'linear-gradient(180deg, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.04) 80%)'
-                      : 'linear-gradient(180deg, rgba(255,255,255,0.6) 20%, rgba(255,255,255,0.2) 80%)',
-                  }}
-                />
-                <div className="absolute inset-y-0 right-0 w-[1px] pointer-events-none"
-                  style={{
-                    background: darkMode
-                      ? 'linear-gradient(180deg, rgba(255,255,255,0.15) 20%, rgba(255,255,255,0.04) 80%)'
-                      : 'linear-gradient(180deg, rgba(255,255,255,0.6) 20%, rgba(255,255,255,0.2) 80%)',
-                  }}
-                />
-                {/* Subtle top gradient glow */}
-                <div className="absolute inset-x-0 top-0 h-[40%] pointer-events-none"
-                  style={{
-                    background: darkMode
-                      ? 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%)'
-                      : 'linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 100%)',
-                  }}
-                />
-                {/* Prismatic refraction on drag */}
+                {/* Rim highlights */}
+                <div className="absolute inset-x-0 top-0 h-[1px]" style={{
+                  background: darkMode
+                    ? 'linear-gradient(90deg, transparent 8%, rgba(255,255,255,0.25) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.25) 70%, transparent 92%)'
+                    : 'linear-gradient(90deg, transparent 8%, rgba(255,255,255,0.8) 30%, rgba(255,255,255,1) 50%, rgba(255,255,255,0.8) 70%, transparent 92%)',
+                }} />
+                <div className="absolute inset-x-0 bottom-0 h-[1px]" style={{
+                  background: darkMode
+                    ? 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.06) 50%, transparent 85%)'
+                    : 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.3) 50%, transparent 85%)',
+                }} />
+                {/* Top gradient */}
+                <div className="absolute inset-x-0 top-0 h-[35%]" style={{
+                  background: darkMode
+                    ? 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%)'
+                    : 'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, transparent 100%)',
+                }} />
+                {/* Drag prismatic */}
                 {dragging && (
-                  <div className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background: `linear-gradient(${105 + distFromCenter * 45}deg,
-                        rgba(130,200,255,${darkMode ? 0.06 : 0.04}) 0%,
-                        rgba(180,140,255,${darkMode ? 0.05 : 0.03}) 50%,
-                        rgba(255,180,130,${darkMode ? 0.05 : 0.03}) 100%)`,
-                    }}
-                  />
+                  <div className="absolute inset-0" style={{
+                    background: `linear-gradient(${105 + distFromCenter * 45}deg, rgba(130,200,255,${darkMode ? 0.06 : 0.03}) 0%, rgba(180,140,255,${darkMode ? 0.05 : 0.02}) 50%, rgba(255,180,130,${darkMode ? 0.05 : 0.02}) 100%)`,
+                  }} />
                 )}
               </div>
             </div>
 
-            {/* Tab buttons */}
+            {/* Layer 1: Base icons (dim, outlined) — always visible */}
             <div className="relative flex">
-              {TABS.map((t, i) => {
-                const overlap = getGlassOverlap(i, pillPos)
-                const isUnder = overlap > 0.5
+              {TABS.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => { if (!dragging) setTab(t.id) }}
+                  className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative z-10 select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
+                  style={{ color: dimColor }}
+                >
+                  <span className="flex">{t.outlined}</span>
+                  <span style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.02em' }}>{t.label}</span>
+                </button>
+              ))}
+            </div>
 
-                return (
-                  <button
+            {/* Layer 2: Magnified bright icons — clipped to pill shape (the "lens" effect) */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                clipPath: `inset(${clipInset} round 12px)`,
+                transition: dragging ? 'none' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
+              }}
+            >
+              <div className="flex h-full">
+                {TABS.map((t) => (
+                  <div
                     key={t.id}
-                    onClick={() => { if (!dragging) setTab(t.id) }}
-                    className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative z-10 select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
-                    style={{
-                      color: darkMode
-                        ? `rgba(255,255,255,${0.3 + overlap * 0.7})`
-                        : `rgba(0,0,0,${0.3 + overlap * 0.55})`,
-                      transition: dragging ? 'color 40ms' : 'color 300ms',
-                    }}
+                    className="flex-1 flex flex-col items-center justify-center gap-1"
+                    style={{ color: brightColor }}
                   >
-                    <span style={{
-                      transform: `scale(${1 + overlap * 0.08})`,
-                      transition: dragging ? 'transform 40ms' : 'transform 300ms',
-                      display: 'flex',
-                    }}>
-                      {isUnder ? t.filled : t.outlined}
-                    </span>
-                    <span style={{
-                      fontSize: 10,
-                      fontWeight: isUnder ? 600 : 400,
-                      letterSpacing: '0.02em',
-                      transition: dragging ? 'none' : 'font-weight 300ms',
-                    }}>
-                      {t.label}
-                    </span>
-                  </button>
-                )
-              })}
+                    <span className="flex" style={{ transform: 'scale(1.12)' }}>{t.filled}</span>
+                    <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.02em' }}>{t.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
