@@ -88,28 +88,23 @@ function App() {
   // Depth: strong layered shadows
   const pillShadow = darkMode
     ? (dragging
-      ? `inset 0 0 0 1.5px rgba(255,255,255,0.15),
-         inset 0 1px 0 rgba(255,255,255,0.25),
-         inset 0 -1px 0 rgba(255,255,255,0.05),
-         0 0 0 1px rgba(0,0,0,0.6),
-         0 6px 20px rgba(0,0,0,0.6),
-         0 16px 48px -8px rgba(0,0,0,0.5)`
-      : `inset 0 0 0 1px rgba(255,255,255,0.1),
-         inset 0 0.5px 0 rgba(255,255,255,0.15),
+      ? `inset 0 0 0 1.5px rgba(255,255,255,0.12),
+         inset 0 0.5px 0 rgba(255,255,255,0.2),
          0 0 0 0.5px rgba(0,0,0,0.4),
-         0 4px 12px rgba(0,0,0,0.3),
-         0 8px 24px -4px rgba(0,0,0,0.2)`)
+         0 4px 12px rgba(0,0,0,0.3)`
+      : `inset 0 0 0 1px rgba(255,255,255,0.08),
+         inset 0 0.5px 0 rgba(255,255,255,0.12),
+         0 0 0 0.5px rgba(0,0,0,0.2),
+         0 2px 6px rgba(0,0,0,0.15)`)
     : (dragging
-      ? `inset 0 0 0 1.5px rgba(255,255,255,0.6),
-         inset 0 1px 0 rgba(255,255,255,0.9),
-         0 0 0 1px rgba(0,0,0,0.08),
-         0 6px 20px rgba(0,0,0,0.12),
-         0 16px 48px -8px rgba(0,0,0,0.1)`
-      : `inset 0 0 0 1px rgba(255,255,255,0.45),
-         inset 0 0.5px 0 rgba(255,255,255,0.7),
+      ? `inset 0 0 0 1.5px rgba(255,255,255,0.5),
+         inset 0 0.5px 0 rgba(255,255,255,0.8),
          0 0 0 0.5px rgba(0,0,0,0.05),
-         0 4px 12px rgba(0,0,0,0.06),
-         0 8px 24px -4px rgba(0,0,0,0.04)`)
+         0 4px 12px rgba(0,0,0,0.06)`
+      : `inset 0 0 0 1px rgba(255,255,255,0.35),
+         inset 0 0.5px 0 rgba(255,255,255,0.6),
+         0 0 0 0.5px rgba(0,0,0,0.03),
+         0 2px 6px rgba(0,0,0,0.03)`)
 
   return (
     <div className={`h-svh ${bg}`}>
