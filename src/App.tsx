@@ -74,8 +74,8 @@ function App() {
   // Principle 3: Adaptive Tinting — pill tints based on dark/light
   // regularMaterial equivalent: moderate blur + tint + brightness
   const pillBackdrop = dragging
-    ? `blur(2px) brightness(${darkMode ? 2.5 : 1.3}) saturate(2)`
-    : `blur(1px) brightness(${darkMode ? 2 : 1.15}) saturate(1.8)`
+    ? `blur(0.5px) brightness(${darkMode ? 2.5 : 1.3}) saturate(2)`
+    : `blur(0.5px) brightness(${darkMode ? 2 : 1.15}) saturate(1.8)`
 
   const pillBg = darkMode
     ? `rgba(255,255,255,${dragging ? 0.1 : 0.06})`
