@@ -185,7 +185,7 @@ function App() {
                 clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round 9999px)`,
                 transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }}>
-              <div className="flex h-full">
+              <div className="flex h-full px-2">
                 {TABS.map((t) => (
                   <div key={t.id} className="flex-1 flex flex-col items-center justify-center gap-1"
                     style={{ color: brightColor }}>
