@@ -125,29 +125,67 @@ function App() {
             >
               {/* Glass body */}
               <div
-                className="absolute inset-x-1 inset-y-0 rounded-[11px]"
+                className="absolute inset-x-1 inset-y-0 rounded-[11px] overflow-hidden"
                 style={{
                   background: darkMode
-                    ? `rgba(255,255,255,${dragging ? 0.16 : 0.12})`
-                    : `rgba(255,255,255,${dragging ? 0.9 : 0.8})`,
+                    ? `rgba(255,255,255,${dragging ? 0.18 : 0.12})`
+                    : `rgba(255,255,255,${dragging ? 0.92 : 0.8})`,
                   boxShadow: darkMode
-                    ? `inset 0 1px 0 0 rgba(255,255,255,0.18), inset 0 -1px 0 0 rgba(255,255,255,0.05), 0 0 ${dragging ? 16 : 8}px ${dragging ? 3 : 1}px rgba(255,255,255,0.05)`
-                    : `inset 0 1px 0 0 rgba(255,255,255,1), 0 2px ${dragging ? 10 : 6}px -2px rgba(0,0,0,${dragging ? 0.12 : 0.08})`,
-                  border: darkMode ? '1px solid rgba(255,255,255,0.14)' : '1px solid rgba(255,255,255,0.9)',
-                  backdropFilter: 'blur(24px)',
-                  transition: dragging ? 'background 100ms, box-shadow 100ms' : 'all 500ms cubic-bezier(0.32, 0.72, 0, 1)',
+                    ? `inset 0 1px 0 0 rgba(255,255,255,${dragging ? 0.25 : 0.18}), inset 0 -1px 0 0 rgba(255,255,255,0.05), 0 0 ${dragging ? 20 : 8}px ${dragging ? 4 : 1}px rgba(255,255,255,${dragging ? 0.08 : 0.04})`
+                    : `inset 0 1px 0 0 rgba(255,255,255,1), 0 2px ${dragging ? 12 : 6}px -2px rgba(0,0,0,${dragging ? 0.15 : 0.08})`,
+                  border: `1px solid ${darkMode ? `rgba(255,255,255,${dragging ? 0.22 : 0.14})` : 'rgba(255,255,255,0.9)'}`,
+                  backdropFilter: `blur(${dragging ? 32 : 24}px) saturate(${dragging ? 1.8 : 1.2})`,
+                  transition: dragging ? 'background 80ms, box-shadow 80ms, border 80ms, backdrop-filter 80ms' : 'all 500ms cubic-bezier(0.32, 0.72, 0, 1)',
                 }}
-              />
-              {/* Refraction highlight */}
-              <div
-                className="absolute inset-x-1 top-0 h-[45%] pointer-events-none"
-                style={{
-                  background: darkMode
-                    ? 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%)'
-                    : 'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, transparent 100%)',
-                  borderRadius: '11px 11px 50% 50%',
-                }}
-              />
+              >
+                {/* Top refraction highlight */}
+                <div
+                  className="absolute inset-x-0 top-0 h-[50%] pointer-events-none"
+                  style={{
+                    background: darkMode
+                      ? `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.18 : 0.1}) 0%, transparent 100%)`
+                      : `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.8 : 0.6}) 0%, transparent 100%)`,
+                    borderRadius: '11px 11px 50% 50%',
+                  }}
+                />
+
+                {/* Prismatic rainbow refraction — visible when dragging */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: dragging
+                      ? `linear-gradient(${105 + distFromCenter * 60}deg, rgba(120,200,255,${darkMode ? 0.12 : 0.08}) 0%, rgba(200,130,255,${darkMode ? 0.1 : 0.06}) 35%, rgba(255,180,120,${darkMode ? 0.1 : 0.06}) 65%, rgba(120,255,200,${darkMode ? 0.08 : 0.05}) 100%)`
+                      : 'none',
+                    opacity: dragging ? 1 : 0,
+                    transition: dragging ? 'none' : 'opacity 400ms',
+                  }}
+                />
+
+                {/* Moving light streak on drag */}
+                <div
+                  className="absolute inset-y-0 pointer-events-none"
+                  style={{
+                    width: '40%',
+                    left: dragging ? `${(distFromCenter * 120)}%` : '30%',
+                    background: `linear-gradient(90deg, transparent, rgba(255,255,255,${dragging ? (darkMode ? 0.15 : 0.3) : 0}) 50%, transparent)`,
+                    filter: dragging ? 'blur(8px)' : 'blur(4px)',
+                    opacity: dragging ? 1 : 0,
+                    transition: dragging ? 'left 60ms, opacity 60ms' : 'opacity 400ms',
+                  }}
+                />
+              </div>
+
+              {/* Outer glow when dragging */}
+              {dragging && (
+                <div
+                  className="absolute inset-x-0 inset-y-[-2px] rounded-[13px] pointer-events-none"
+                  style={{
+                    boxShadow: darkMode
+                      ? '0 0 24px 4px rgba(180,200,255,0.08), 0 0 8px 2px rgba(255,255,255,0.06)'
+                      : '0 0 20px 4px rgba(0,0,0,0.06)',
+                  }}
+                />
+              )}
             </div>
 
             {/* Tab buttons */}
