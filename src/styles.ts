@@ -76,7 +76,7 @@ export function glassChip(dark: boolean, active: boolean): CSSProperties {
       ? '0.5px solid rgba(255,255,255,0.05)'
       : '0.5px solid rgba(255,255,255,0.35)',
     borderRadius: 14,
-    color: dark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)',
+    color: dark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.5)',
   }
 }
 
@@ -102,5 +102,5 @@ export function toggleBtn(dark: boolean, active: boolean): CSSProperties {
 }
 
 export function sub(dark: boolean) {
-  return dark ? 'text-white/35' : 'text-black/35'
+  return dark ? 'text-white/35' : 'text-black/50'
 }

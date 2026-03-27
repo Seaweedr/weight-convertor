@@ -18,7 +18,7 @@ html.dark-bg {
   background: linear-gradient(145deg, #0c0c14 0%, #111125 35%, #0e1520 65%, #0a0a12 100%);
 }
 html.light-bg {
-  background: linear-gradient(145deg, #e8e4ef 0%, #dde0f0 35%, #e5e8f2 65%, #ece8f0 100%);
+  background: linear-gradient(145deg, #d8d4e0 0%, #d0d4e4 35%, #d6dae6 65%, #dcd8e2 100%);
 }
 
 * {
