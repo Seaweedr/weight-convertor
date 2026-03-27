@@ -107,7 +107,7 @@ function App() {
         <div className="px-3 pb-1">
           <div
             ref={containerRef}
-            className="relative rounded-2xl select-none touch-none"
+            className="relative rounded-full select-none touch-none"
             style={{
               background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.45)',
               backdropFilter: 'blur(40px) saturate(1.6)',
@@ -178,7 +178,7 @@ function App() {
             </div>
 
             {/* Magnified layer — clipped to pill, icons bigger + brighter */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"
+            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full"
               style={{
                 clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round ${dragging ? 18 : 12}px)`,
                 transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
