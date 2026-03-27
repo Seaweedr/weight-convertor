@@ -223,13 +223,18 @@ function App() {
               })}
             </div>
 
-            {/* Magnified layer — clipped to pill, icons bigger + brighter */}
+            {/* Magnified layer — clipped to pill, scaled from pill center for lens distortion */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full"
               style={{
                 clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round 9999px)`,
                 transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }}>
-              <div className="flex h-full">
+              <div className="flex h-full"
+                style={{
+                  transform: `scale(${dragging ? 1.08 : 1.05})`,
+                  transformOrigin: `${(pillPos + 0.5) / TAB_COUNT * 100}% 50%`,
+                  transition: dragging ? 'transform-origin 40ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), transform-origin 600ms cubic-bezier(0.25, 1, 0.5, 1)',
+                }}>
                 {TABS.map((t) => (
                   <div key={t.id} className="flex-1 flex flex-col items-center justify-center gap-1"
                     style={{ color: brightColor }}>
