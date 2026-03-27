@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { glass, inputStyle, sub, chipStyle, cellStyle, toggleStyle } from '../styles'
+import { glass, inputStyle, sub, cellStyle, toggleStyle } from '../styles'
 
 const PLATES_LB = [45, 25, 10, 5, 2.5]
 const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25]

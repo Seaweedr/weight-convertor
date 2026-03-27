@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { glass, inputStyle, sub, chipStyle, cellStyle, toggleStyle } from '../styles'
+import { glass, inputStyle, sub, cellStyle, toggleStyle } from '../styles'
 
 function calcEpley(w: number, r: number): number {
   if (r === 1) return w
