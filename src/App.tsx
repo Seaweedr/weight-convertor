@@ -79,19 +79,21 @@ function App() {
   // Pill morphs: when pressing, pill gets taller and more opaque
   const pillScale = dragging ? 'scaleY(1.2) scaleX(1.05)' : 'scaleY(1) scaleX(1)'
   const pillBg = darkMode
-    ? (dragging ? 'rgba(35,35,40,0.9)' : 'rgba(255,255,255,0.08)')
-    : (dragging ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.55)')
-  const pillBlur = dragging ? 'blur(30px) brightness(1.5) saturate(2)' : `blur(20px) brightness(${darkMode ? 1.3 : 1.02}) saturate(1.8)`
+    ? (dragging ? 'rgba(50,50,60,0.95)' : 'rgba(255,255,255,0.08)')
+    : (dragging ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.55)')
+  const pillBlur = dragging
+    ? `blur(40px) brightness(${darkMode ? 1.8 : 1.1}) saturate(2.5)`
+    : `blur(20px) brightness(${darkMode ? 1.3 : 1.02}) saturate(1.8)`
   const pillShadow = darkMode
     ? (dragging
-      ? 'inset 0 0.5px 0 rgba(255,255,255,0.2), inset 0 -0.5px 0 rgba(255,255,255,0.05), 0 0 0 0.5px rgba(255,255,255,0.12), 0 8px 24px -4px rgba(0,0,0,0.6)'
+      ? 'inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -0.5px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.15), 0 12px 32px -4px rgba(0,0,0,0.7), 0 0 20px rgba(255,255,255,0.04)'
       : 'inset 0 0.5px 0 rgba(255,255,255,0.15), 0 0 0 0.5px rgba(255,255,255,0.08)')
     : (dragging
-      ? 'inset 0 0.5px 0 rgba(255,255,255,0.95), 0 1px 6px rgba(0,0,0,0.1), 0 8px 24px -4px rgba(0,0,0,0.1)'
+      ? 'inset 0 1px 0 rgba(255,255,255,1), 0 2px 8px rgba(0,0,0,0.12), 0 12px 32px -4px rgba(0,0,0,0.12)'
       : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 1px 4px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(255,255,255,0.5)')
   const pillBorder = darkMode
-    ? (dragging ? '0.5px solid rgba(255,255,255,0.18)' : '0.5px solid rgba(255,255,255,0.1)')
-    : (dragging ? '0.5px solid rgba(255,255,255,0.9)' : '0.5px solid rgba(255,255,255,0.6)')
+    ? (dragging ? '1px solid rgba(255,255,255,0.22)' : '0.5px solid rgba(255,255,255,0.1)')
+    : (dragging ? '1px solid rgba(255,255,255,0.95)' : '0.5px solid rgba(255,255,255,0.6)')
 
   return (
     <div className={`h-svh ${bg}`}>
@@ -127,15 +129,15 @@ function App() {
               className="absolute left-0 pointer-events-none"
               style={{
                 width: `${pillWidthPct}%`,
-                top: dragging ? -4 : 3,
-                bottom: dragging ? -4 : 3,
+                top: dragging ? -6 : 3,
+                bottom: dragging ? -6 : 3,
                 transform: `translateX(${translateX}%) ${pillScale}`,
                 transition: dragging ? 'top 200ms, bottom 200ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), top 200ms, bottom 200ms',
               }}
             >
               <div className="absolute inset-x-[3px] inset-y-0 overflow-hidden"
                 style={{
-                  borderRadius: dragging ? 18 : 12,
+                  borderRadius: 9999,
                   background: pillBg,
                   backdropFilter: pillBlur,
                   WebkitBackdropFilter: pillBlur,
@@ -162,7 +164,7 @@ function App() {
             </div>
 
             {/* Base icons (dim, outlined) */}
-            <div className="relative flex">
+            <div className="relative flex px-2">
               {TABS.map((t) => {
                 const isActive = tab === t.id
                 return (
@@ -180,7 +182,7 @@ function App() {
             {/* Magnified layer — clipped to pill, icons bigger + brighter */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full"
               style={{
-                clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round ${dragging ? 18 : 12}px)`,
+                clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round 9999px)`,
                 transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }}>
               <div className="flex h-full">
@@ -189,7 +191,7 @@ function App() {
                     style={{ color: brightColor }}>
                     <span className="flex" style={{
                       transform: dragging ? 'scale(1.25)' : 'scale(1.1)',
-                      filter: dragging && darkMode ? 'drop-shadow(0 0 6px rgba(255,255,255,0.2))' : 'none',
+                      filter: dragging ? (darkMode ? 'drop-shadow(0 0 8px rgba(255,255,255,0.3))' : 'drop-shadow(0 0 6px rgba(0,0,0,0.15))') : 'none',
                       transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), filter 200ms',
                     }}>{t.filled}</span>
                     <span style={{
