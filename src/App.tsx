@@ -90,21 +90,17 @@ function App() {
     ? (dragging
       ? `inset 0 0 0 1.5px rgba(255,255,255,0.12),
          inset 0 0.5px 0 rgba(255,255,255,0.2),
-         0 0 0 0.5px rgba(0,0,0,0.4),
-         0 4px 12px rgba(0,0,0,0.3)`
+         0 0 0 0.5px rgba(0,0,0,0.4)`
       : `inset 0 0 0 1px rgba(255,255,255,0.08),
          inset 0 0.5px 0 rgba(255,255,255,0.12),
-         0 0 0 0.5px rgba(0,0,0,0.2),
-         0 2px 6px rgba(0,0,0,0.15)`)
+         0 0 0 0.5px rgba(0,0,0,0.2)`)
     : (dragging
       ? `inset 0 0 0 1.5px rgba(255,255,255,0.5),
          inset 0 0.5px 0 rgba(255,255,255,0.8),
-         0 0 0 0.5px rgba(0,0,0,0.05),
-         0 4px 12px rgba(0,0,0,0.06)`
+         0 0 0 0.5px rgba(0,0,0,0.05)`
       : `inset 0 0 0 1px rgba(255,255,255,0.35),
          inset 0 0.5px 0 rgba(255,255,255,0.6),
-         0 0 0 0.5px rgba(0,0,0,0.03),
-         0 2px 6px rgba(0,0,0,0.03)`)
+         0 0 0 0.5px rgba(0,0,0,0.03)`)
 
   return (
     <div className={`h-svh ${bg}`}>
