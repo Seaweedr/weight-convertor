@@ -74,12 +74,12 @@ function App() {
   // Principle 3: Adaptive Tinting — pill tints based on dark/light
   // regularMaterial equivalent: moderate blur + tint + brightness
   const pillBackdrop = dragging
-    ? `blur(24px) brightness(${darkMode ? 1.6 : 1.1}) saturate(1.8)`
-    : `blur(20px) brightness(${darkMode ? 1.4 : 1.05}) saturate(1.6)`
+    ? `blur(2px) brightness(${darkMode ? 2.5 : 1.3}) saturate(2)`
+    : `blur(1px) brightness(${darkMode ? 2 : 1.15}) saturate(1.8)`
 
   const pillBg = darkMode
-    ? `rgba(255,255,255,${dragging ? 0.12 : 0.08})`
-    : `rgba(255,255,255,${dragging ? 0.55 : 0.45})`
+    ? `rgba(255,255,255,${dragging ? 0.1 : 0.06})`
+    : `rgba(255,255,255,${dragging ? 0.35 : 0.25})`
 
   // Glass edge: continuous rounded shape, inset highlight top, shadow bottom
   const pillShadow = darkMode
