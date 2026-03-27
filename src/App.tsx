@@ -42,7 +42,7 @@ function App() {
   const translateX = pillPos * 100
   const pillWidthPct = 100 / TAB_COUNT
 
-  // Clip for magnified layer
+  // Clip for magnified layer — must account for px-2 (8px) padding
   const pillLeftPct = (pillPos / TAB_COUNT) * 100
   const clipLeft = pillLeftPct + 0.8
   const clipRight = 100 - (pillLeftPct + pillWidthPct) + 0.8
@@ -164,7 +164,7 @@ function App() {
             </div>
 
             {/* Base icons (dim, outlined) */}
-            <div className="relative flex px-2">
+            <div className="relative flex">
               {TABS.map((t) => {
                 const isActive = tab === t.id
                 return (
@@ -185,7 +185,7 @@ function App() {
                 clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round 9999px)`,
                 transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }}>
-              <div className="flex h-full px-2">
+              <div className="flex h-full">
                 {TABS.map((t) => (
                   <div key={t.id} className="flex-1 flex flex-col items-center justify-center gap-1"
                     style={{ color: brightColor }}>
