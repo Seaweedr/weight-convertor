@@ -180,17 +180,36 @@ function App() {
                     ? 'background 150ms, box-shadow 150ms, backdrop-filter 150ms'
                     : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
-                {/* Specular top shine */}
-                <div className="absolute inset-x-0 top-0 h-[1px]" style={{
+                {/* Top specular shine — wide */}
+                <div className="absolute inset-x-0 top-0 h-[2px]" style={{
                   background: darkMode
-                    ? `linear-gradient(90deg, transparent 15%, rgba(255,255,255,${dragging ? 0.35 : 0.2}) 50%, transparent 85%)`
-                    : `linear-gradient(90deg, transparent 15%, rgba(255,255,255,${dragging ? 0.9 : 0.7}) 50%, transparent 85%)`,
+                    ? `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 50%, transparent 90%)`
+                    : `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 1 : 0.85}) 50%, transparent 90%)`,
                 }} />
-                {/* Center lens brightening */}
-                <div className="absolute inset-0" style={{
-                  background: `radial-gradient(ellipse 60% 70% at 50% 45%,
-                    rgba(255,255,255,${darkMode ? (dragging ? 0.04 : 0.02) : (dragging ? 0.08 : 0.04)}) 0%,
+                {/* Top crescent reflection */}
+                <div className="absolute inset-x-[10%] top-0" style={{
+                  height: dragging ? '45%' : '35%',
+                  background: darkMode
+                    ? `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.1 : 0.05}) 0%, transparent 100%)`
+                    : `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.25 : 0.15}) 0%, transparent 100%)`,
+                  borderRadius: '9999px 9999px 50% 50%',
+                }} />
+                {/* Bottom edge reflection */}
+                <div className="absolute inset-x-[15%] bottom-0 h-[1px]" style={{
+                  background: darkMode
+                    ? `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.12 : 0.06}) 50%, transparent 90%)`
+                    : `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.3 : 0.2}) 50%, transparent 90%)`,
+                }} />
+                {/* Off-center highlight spot — simulates light source reflection */}
+                <div className="absolute" style={{
+                  width: '30%',
+                  height: '40%',
+                  top: '10%',
+                  left: '15%',
+                  background: `radial-gradient(ellipse at 50% 50%,
+                    rgba(255,255,255,${darkMode ? (dragging ? 0.08 : 0.04) : (dragging ? 0.15 : 0.08)}) 0%,
                     transparent 100%)`,
+                  filter: 'blur(2px)',
                 }} />
               </div>
 
