@@ -42,10 +42,7 @@ function App() {
   const translateX = pillPos * 100
   const pillWidthPct = 100 / TAB_COUNT
 
-  // Clip for magnified layer — must account for px-2 (8px) padding
-  const pillLeftPct = (pillPos / TAB_COUNT) * 100
-  const clipLeft = pillLeftPct + 0.8
-  const clipRight = 100 - (pillLeftPct + pillWidthPct) + 0.8
+  // (clip vars removed — single layer approach, no magnified layer)
 
   function clientXToProgress(clientX: number): number {
     const el = containerRef.current
@@ -74,7 +71,6 @@ function App() {
 
   const bg = darkMode ? 'text-white' : 'text-zinc-900'
   const dimColor = darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
-  const brightColor = darkMode ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,0.85)'
 
   // Pill morphs: when pressing, pill expands horizontally (wider capsule)
   const pillScale = dragging ? 'scaleX(1.15)' : 'scaleX(1)'
@@ -83,8 +79,8 @@ function App() {
     ? (dragging ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.01)')
     : (dragging ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.02)')
   const pillBlur = dragging
-    ? `brightness(${darkMode ? 3 : 1.4}) saturate(3) contrast(1.1)`
-    : `brightness(${darkMode ? 2 : 1.15}) saturate(2.5) contrast(1.05)`
+    ? `brightness(${darkMode ? 4 : 1.8}) saturate(3) contrast(1.15)`
+    : `brightness(${darkMode ? 3 : 1.5}) saturate(2.5) contrast(1.1)`
   // Depth: strong layered shadows
   const pillShadow = darkMode
     ? (dragging
@@ -207,42 +203,20 @@ function App() {
               }} />
             </div>
 
-            {/* Base icons (dim, outlined) */}
+            {/* Single icon layer — glass pill's backdrop-filter handles the visual change */}
             <div className="relative flex">
               {TABS.map((t) => {
                 const isActive = tab === t.id
                 return (
                   <button key={t.id}
                     onClick={() => { if (!dragging) setTab(t.id) }}
-                    className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative z-10 select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
-                    style={{ color: isActive ? (darkMode ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.7)') : dimColor }}>
+                    className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
+                    style={{ color: dimColor }}>
                     <span className="flex">{isActive ? t.filled : t.outlined}</span>
-                    <span style={{ fontSize: 10, fontWeight: isActive ? 500 : 400, letterSpacing: '0.02em' }}>{t.label}</span>
+                    <span style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.02em' }}>{t.label}</span>
                   </button>
                 )
               })}
-            </div>
-
-            {/* Magnified layer — clipped to pill, scaled from pill center for lens distortion */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full"
-              style={{
-                clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round 9999px)`,
-                transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
-              }}>
-              <div className="flex h-full"
-                style={{
-                  transform: `scale(${dragging ? 1.15 : 1.05})`,
-                  transformOrigin: `${(pillPos + 0.5) / TAB_COUNT * 100}% 50%`,
-                  transition: dragging ? 'transform-origin 40ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), transform-origin 600ms cubic-bezier(0.25, 1, 0.5, 1)',
-                }}>
-                {TABS.map((t) => (
-                  <div key={t.id} className="flex-1 flex flex-col items-center justify-center gap-1"
-                    style={{ color: brightColor }}>
-                    <span className="flex">{t.filled}</span>
-                    <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.02em' }}>{t.label}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
