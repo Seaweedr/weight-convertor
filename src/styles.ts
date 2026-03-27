@@ -23,6 +23,21 @@ export function chipStyle(darkMode: boolean, active: boolean) {
     : 'bg-black/[0.05] text-zinc-500 hover:bg-black/[0.08]'
 }
 
+export function accentBtn(darkMode: boolean) {
+  return darkMode
+    ? 'bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/25'
+    : 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20'
+}
+
+export function toggleStyle(darkMode: boolean, active: boolean) {
+  if (active) return darkMode
+    ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25'
+    : 'bg-blue-500 text-white shadow-md shadow-blue-500/20'
+  return darkMode
+    ? 'bg-white/[0.08] text-white/50 hover:bg-white/[0.14]'
+    : 'bg-black/[0.05] text-zinc-500 hover:bg-black/[0.08]'
+}
+
 export function cellStyle(darkMode: boolean) {
   return darkMode
     ? 'bg-white/[0.05]'

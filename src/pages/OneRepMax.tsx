@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { glass, inputStyle, sub, chipStyle, cellStyle } from '../styles'
+import { glass, inputStyle, sub, chipStyle, cellStyle, toggleStyle } from '../styles'
 
 function calcEpley(w: number, r: number): number {
   if (r === 1) return w
@@ -49,7 +49,7 @@ export default function OneRepMax({ darkMode }: { darkMode: boolean }) {
         <div className="flex justify-center gap-1.5 mb-4">
           {(['lb', 'kg'] as const).map(u => (
             <button key={u} onClick={() => setUnit(u)}
-              className={`px-5 py-1.5 rounded-full text-sm font-semibold uppercase transition-all cursor-pointer ${chipStyle(darkMode, unit === u)}`}>
+              className={`px-5 py-1.5 rounded-full text-sm font-semibold uppercase transition-all cursor-pointer ${toggleStyle(darkMode, unit === u)}`}>
               {u}
             </button>
           ))}
@@ -72,8 +72,8 @@ export default function OneRepMax({ darkMode }: { darkMode: boolean }) {
 
         {/* Tabs */}
         <div className="flex justify-center gap-1.5 mb-3">
-          <button onClick={() => setShowRpe(false)} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${chipStyle(darkMode, !showRpe)}`}>百分比表</button>
-          <button onClick={() => setShowRpe(true)} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${chipStyle(darkMode, showRpe)}`}>RPE 對照</button>
+          <button onClick={() => setShowRpe(false)} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${toggleStyle(darkMode, !showRpe)}`}>百分比表</button>
+          <button onClick={() => setShowRpe(true)} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${toggleStyle(darkMode, showRpe)}`}>RPE 對照</button>
         </div>
 
         {!showRpe && avg && (

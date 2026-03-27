@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { glass, inputStyle, sub, chipStyle, cellStyle } from '../styles'
+import { glass, inputStyle, sub, chipStyle, cellStyle, toggleStyle } from '../styles'
 
 const PLATES_LB = [45, 25, 10, 5, 2.5]
 const PLATES_KG = [25, 20, 15, 10, 5, 2.5, 1.25]
@@ -128,7 +128,7 @@ export default function PlateCalc({ darkMode }: { darkMode: boolean }) {
         <div className="flex justify-center gap-1.5 mb-4">
           {(['lb', 'kg'] as const).map(u => (
             <button key={u} onClick={() => setUnit(u)}
-              className={`px-5 py-1.5 rounded-full text-sm font-semibold uppercase transition-all cursor-pointer ${chipStyle(darkMode, unit === u)}`}>
+              className={`px-5 py-1.5 rounded-full text-sm font-semibold uppercase transition-all cursor-pointer ${toggleStyle(darkMode, unit === u)}`}>
               {u}
             </button>
           ))}

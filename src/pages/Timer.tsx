@@ -74,7 +74,7 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
 
   const s = sub(darkMode)
   const ringBg = darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'
-  const ringColor = isFinished ? '#f87171' : darkMode ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.7)'
+  const ringColor = isFinished ? '#f87171' : running ? '#f97316' : '#22c55e'
 
   return (
     <div className="flex flex-col items-center px-5 py-8">
@@ -104,8 +104,10 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
         <button onClick={toggleRun}
           className={`px-8 py-2.5 rounded-full font-semibold text-base transition-all cursor-pointer ${
             running
-              ? darkMode ? 'bg-white/10 text-white/70' : 'bg-black/5 text-zinc-600'
-              : 'bg-white text-zinc-900 shadow-md shadow-black/10'
+              ? 'bg-orange-500/80 text-white shadow-lg shadow-orange-500/25'
+              : isFinished
+                ? 'bg-red-500 text-white shadow-lg shadow-red-500/25'
+                : 'bg-green-500 text-white shadow-lg shadow-green-500/25'
           }`}>
           {running ? '暫停' : remaining === 0 ? '重新開始' : '開始'}
         </button>

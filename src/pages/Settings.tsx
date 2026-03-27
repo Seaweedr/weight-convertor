@@ -18,7 +18,7 @@ export default function Settings({ darkMode, setDarkMode }: { darkMode: boolean;
           <span className="font-medium text-sm">深色模式</span>
           <button onClick={() => setDarkMode(!darkMode)}
             className={`relative w-12 h-7 rounded-full transition-colors cursor-pointer ${
-              darkMode ? 'bg-white' : 'bg-zinc-300'
+              darkMode ? 'bg-blue-500' : 'bg-zinc-300'
             }`}>
             <span
               className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full shadow transition-transform ${
