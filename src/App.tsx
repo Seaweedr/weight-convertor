@@ -144,8 +144,8 @@ function App() {
               className="absolute left-0 pointer-events-none"
               style={{
                 width: `${pillWidthPct}%`,
-                top: dragging ? -1 : 3,
-                bottom: dragging ? -1 : 3,
+                top: dragging ? -5 : 3,
+                bottom: dragging ? -5 : 3,
                 transform: `translateX(${translateX}%) ${pillScale}`,
                 transition: dragging ? 'top 200ms, bottom 200ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), top 200ms, bottom 200ms',
               }}
