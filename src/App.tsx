@@ -78,37 +78,38 @@ function App() {
 
   // Pill morphs: when pressing, pill expands horizontally (wider capsule)
   const pillScale = dragging ? 'scaleX(1.15)' : 'scaleX(1)'
-  // Glass material — thick glass look
+  // Glass: high refraction (brightness/saturate), high depth (shadows), minimal frost (blur ~0)
   const pillBg = darkMode
-    ? (dragging ? 'rgba(60,60,70,0.6)' : 'rgba(255,255,255,0.06)')
-    : (dragging ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.35)')
+    ? (dragging ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.03)')
+    : (dragging ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.1)')
   const pillBlur = dragging
-    ? `blur(2px) brightness(${darkMode ? 2 : 1.15}) saturate(2)`
-    : `blur(2px) brightness(${darkMode ? 1.4 : 1.05}) saturate(1.6)`
-  // Thick glass edge: multiple inset shadows simulate rim depth
+    ? `blur(0.5px) brightness(${darkMode ? 2.2 : 1.2}) saturate(2.5)`
+    : `blur(0.5px) brightness(${darkMode ? 1.5 : 1.08}) saturate(2)`
+  // Depth: strong layered shadows
   const pillShadow = darkMode
     ? (dragging
-      ? `inset 0 0 0 2px rgba(255,255,255,0.12),
-         inset 0 1px 0 rgba(255,255,255,0.3),
-         inset 0 -1px 0 rgba(255,255,255,0.06),
-         0 0 0 1px rgba(0,0,0,0.5),
-         0 4px 16px rgba(0,0,0,0.5),
-         0 12px 40px -8px rgba(0,0,0,0.4)`
-      : `inset 0 0 0 1.5px rgba(255,255,255,0.08),
+      ? `inset 0 0 0 1.5px rgba(255,255,255,0.15),
+         inset 0 1px 0 rgba(255,255,255,0.25),
+         inset 0 -1px 0 rgba(255,255,255,0.05),
+         0 0 0 1px rgba(0,0,0,0.6),
+         0 6px 20px rgba(0,0,0,0.6),
+         0 16px 48px -8px rgba(0,0,0,0.5)`
+      : `inset 0 0 0 1px rgba(255,255,255,0.1),
          inset 0 0.5px 0 rgba(255,255,255,0.15),
-         0 0 0 0.5px rgba(0,0,0,0.3),
-         0 2px 8px rgba(0,0,0,0.2)`)
+         0 0 0 0.5px rgba(0,0,0,0.4),
+         0 4px 12px rgba(0,0,0,0.3),
+         0 8px 24px -4px rgba(0,0,0,0.2)`)
     : (dragging
-      ? `inset 0 0 0 2px rgba(255,255,255,0.5),
+      ? `inset 0 0 0 1.5px rgba(255,255,255,0.6),
          inset 0 1px 0 rgba(255,255,255,0.9),
-         0 0 0 1px rgba(0,0,0,0.06),
-         0 4px 16px rgba(0,0,0,0.1),
-         0 12px 40px -8px rgba(0,0,0,0.08)`
-      : `inset 0 0 0 1.5px rgba(255,255,255,0.4),
-         inset 0 0.5px 0 rgba(255,255,255,0.8),
-         0 0 0 0.5px rgba(0,0,0,0.04),
-         0 2px 8px rgba(0,0,0,0.05)`)
-  // border replaced by inset shadows for thick glass look
+         0 0 0 1px rgba(0,0,0,0.08),
+         0 6px 20px rgba(0,0,0,0.12),
+         0 16px 48px -8px rgba(0,0,0,0.1)`
+      : `inset 0 0 0 1px rgba(255,255,255,0.45),
+         inset 0 0.5px 0 rgba(255,255,255,0.7),
+         0 0 0 0.5px rgba(0,0,0,0.05),
+         0 4px 12px rgba(0,0,0,0.06),
+         0 8px 24px -4px rgba(0,0,0,0.04)`)
 
   return (
     <div className={`h-svh ${bg}`}>
@@ -196,12 +197,12 @@ function App() {
                 borderRadius: 9999,
                 background: `conic-gradient(from ${dragging ? 200 : 210}deg,
                   transparent 0deg,
-                  rgba(140,200,255,${dragging ? 0.2 : 0.08}) 30deg,
-                  rgba(170,140,255,${dragging ? 0.15 : 0.06}) 70deg,
+                  rgba(140,200,255,${dragging ? 0.35 : 0.15}) 30deg,
+                  rgba(170,140,255,${dragging ? 0.28 : 0.12}) 70deg,
                   transparent 110deg,
                   transparent 180deg,
-                  rgba(255,170,120,${dragging ? 0.15 : 0.06}) 220deg,
-                  rgba(255,120,160,${dragging ? 0.18 : 0.07}) 260deg,
+                  rgba(255,170,120,${dragging ? 0.28 : 0.12}) 220deg,
+                  rgba(255,120,160,${dragging ? 0.32 : 0.14}) 260deg,
                   transparent 300deg,
                   transparent 360deg)`,
                 mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
