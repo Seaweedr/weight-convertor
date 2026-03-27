@@ -83,8 +83,8 @@ function App() {
     ? (dragging ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.03)')
     : (dragging ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.1)')
   const pillBlur = dragging
-    ? `blur(0.5px) brightness(${darkMode ? 2.2 : 1.2}) saturate(2.5)`
-    : `blur(0.5px) brightness(${darkMode ? 1.5 : 1.08}) saturate(2)`
+    ? `blur(0.5px) brightness(${darkMode ? 3 : 1.4}) saturate(3) contrast(1.1)`
+    : `blur(0.5px) brightness(${darkMode ? 2 : 1.15}) saturate(2.5) contrast(1.05)`
   // Depth: strong layered shadows
   const pillShadow = darkMode
     ? (dragging
