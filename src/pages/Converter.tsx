@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
-import { glass, sub, chipStyle, accentBtn } from '../styles'
+import { useState, useRef } from 'react'
+import { glassStyle, inputGlass, sub, chipStyle, accentBtn } from '../styles'
 
 const LB_TO_KG = 0.45359237
 const KG_TO_LB = 1 / LB_TO_KG
@@ -19,14 +19,13 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
   })
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Don't auto-focus on mobile to avoid keyboard popup
-  useEffect(() => { localStorage.setItem('weight-converter-history', JSON.stringify(history)) }, [history])
-
+  function saveHistory() { localStorage.setItem('weight-converter-history', JSON.stringify(history)) }
   function addToHistory(val: string, u: 'lb' | 'kg') {
     if (!val || isNaN(parseFloat(val))) return
     setHistory(prev => {
-      const filtered = prev.filter(h => !(h.value === val && h.unit === u))
-      return [{ value: val, unit: u }, ...filtered].slice(0, 10)
+      const next = [{ value: val, unit: u }, ...prev.filter(h => !(h.value === val && h.unit === u))].slice(0, 10)
+      localStorage.setItem('weight-converter-history', JSON.stringify(next))
+      return next
     })
   }
 
@@ -41,46 +40,45 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
   }
 
   const s = sub(darkMode)
+  const inputColor = darkMode ? 'text-white placeholder:text-white/20' : 'text-zinc-900 placeholder:text-zinc-300'
 
   return (
     <div className="flex flex-col items-center px-5 py-8">
       <h1 className="text-xl font-semibold tracking-tight mb-1">重量換算</h1>
       <p className={`text-xs ${s} mb-5`}>磅 ⇄ 公斤</p>
 
-      <div className={`w-full max-w-sm rounded-3xl p-5 space-y-3 ${glass(darkMode)}`}>
+      {/* Main Card */}
+      <div className="w-full max-w-sm rounded-3xl p-5 space-y-3" style={glassStyle(darkMode)}>
         {/* Input */}
-        <div className={`relative rounded-2xl ${darkMode ? 'bg-white/[0.06]' : 'bg-black/[0.04]'}`}>
-          <input
-            ref={inputRef}
-            type="number"
-            inputMode="decimal"
-            value={inputValue}
+        <div className="relative rounded-2xl overflow-hidden" style={inputGlass(darkMode)}>
+          <input ref={inputRef} type="number" inputMode="decimal" value={inputValue}
             onChange={e => setInputValue(e.target.value)}
-            onBlur={() => addToHistory(inputValue, unit)}
+            onBlur={() => { addToHistory(inputValue, unit); saveHistory() }}
             onKeyDown={e => { if (e.key === 'Enter') addToHistory(inputValue, unit) }}
             placeholder="0"
-            className={`w-full text-4xl font-semibold text-center rounded-2xl py-5 px-14 outline-none bg-transparent transition-shadow [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${darkMode ? 'text-white placeholder:text-white/25' : 'text-zinc-900 placeholder:text-zinc-400'}`}
+            className={`w-full text-4xl font-light text-center rounded-2xl py-5 px-14 outline-none bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${inputColor}`}
           />
-          <span className={`absolute right-5 top-1/2 -translate-y-1/2 text-base font-semibold uppercase ${s}`}>{unit}</span>
+          <span className={`absolute right-5 top-1/2 -translate-y-1/2 text-sm font-medium uppercase ${s}`}>{unit}</span>
         </div>
 
         {/* Swap */}
         <div className="flex justify-center">
           <button onClick={handleSwap}
-            className={`flex items-center gap-1.5 rounded-full px-5 py-2 transition-all duration-200 cursor-pointer font-medium text-sm ${accentBtn(darkMode)}`}>
+            className="flex items-center gap-1.5 rounded-full px-5 py-2 cursor-pointer font-medium text-sm transition-transform active:scale-95"
+            style={accentBtn(darkMode)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" /></svg>
             切換
           </button>
         </div>
 
         {/* Output */}
-        <div className={`relative rounded-2xl ${darkMode ? 'bg-white/[0.06]' : 'bg-black/[0.04]'}`}>
+        <div className="relative rounded-2xl overflow-hidden" style={inputGlass(darkMode)}>
           <div className="py-5 px-14 text-center">
-            <div className={`text-4xl font-semibold ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
+            <div className={`text-4xl font-light ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
               {converted !== null ? formatNumber(converted) : '—'}
             </div>
           </div>
-          <span className={`absolute right-5 top-1/2 -translate-y-1/2 text-base font-semibold uppercase ${s}`}>{outputUnit}</span>
+          <span className={`absolute right-5 top-1/2 -translate-y-1/2 text-sm font-medium uppercase ${s}`}>{outputUnit}</span>
         </div>
       </div>
 
@@ -90,7 +88,8 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
         <div className="grid grid-cols-4 gap-2">
           {QUICK_VALUES.map(val => (
             <button key={val} onClick={() => { setInputValue(val.toString()); addToHistory(val.toString(), unit) }}
-              className={`py-2.5 rounded-2xl text-sm font-medium transition-all cursor-pointer ${chipStyle(darkMode, inputValue === val.toString())}`}>
+              className="py-2.5 rounded-2xl text-sm font-medium cursor-pointer transition-transform active:scale-95"
+              style={chipStyle(darkMode, inputValue === val.toString())}>
               {val} {unit}
             </button>
           ))}
@@ -99,15 +98,16 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
 
       {/* History */}
       {history.length > 0 && (
-        <div className={`w-full max-w-sm mt-5 pt-5 border-t ${darkMode ? 'border-white/[0.08]' : 'border-black/[0.06]'}`}>
+        <div className={`w-full max-w-sm mt-5 pt-5`} style={{ borderTop: darkMode ? '0.5px solid rgba(255,255,255,0.06)' : '0.5px solid rgba(0,0,0,0.06)' }}>
           <div className="flex items-center justify-between mb-2">
             <p className={`text-xs ${s}`}>歷史紀錄</p>
-            <button onClick={() => setHistory([])} className={`text-xs ${s} hover:text-white transition-colors cursor-pointer`}>清除</button>
+            <button onClick={() => setHistory([])} className={`text-xs ${s} hover:text-white cursor-pointer`}>清除</button>
           </div>
           <div className="grid grid-cols-4 gap-2">
             {history.map((h, i) => (
               <button key={`${h.value}-${h.unit}-${i}`} onClick={() => { setInputValue(h.value); setUnit(h.unit) }}
-                className={`py-2.5 rounded-2xl text-sm font-medium transition-all cursor-pointer ${chipStyle(darkMode, inputValue === h.value && unit === h.unit)}`}>
+                className="py-2.5 rounded-2xl text-sm font-medium cursor-pointer transition-transform active:scale-95"
+                style={chipStyle(darkMode, inputValue === h.value && unit === h.unit)}>
                 {h.value} {h.unit}
               </button>
             ))}

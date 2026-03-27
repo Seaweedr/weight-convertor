@@ -1,15 +1,30 @@
-// Shared iOS 26 Liquid Glass style helpers
+// iOS 26 Liquid Glass Design System
 
 export function glass(darkMode: boolean) {
   return darkMode
-    ? 'bg-white/[0.07] backdrop-blur-2xl border border-white/[0.12] shadow-lg shadow-black/20'
-    : 'bg-white/60 backdrop-blur-2xl border border-white/80 shadow-lg shadow-black/5'
+    ? 'backdrop-blur-2xl border border-white/[0.1]'
+    : 'backdrop-blur-2xl border border-white/70'
 }
 
-export function inputStyle(darkMode: boolean) {
-  return darkMode
-    ? 'bg-white/[0.06] text-white placeholder:text-white/25 focus:ring-2 focus:ring-white/20'
-    : 'bg-black/[0.04] text-zinc-900 placeholder:text-zinc-400 focus:ring-2 focus:ring-black/10'
+export function glassStyle(darkMode: boolean) {
+  return {
+    background: darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.45)',
+    backdropFilter: 'blur(40px) saturate(1.6)',
+    WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
+    border: darkMode ? '0.5px solid rgba(255,255,255,0.1)' : '0.5px solid rgba(255,255,255,0.7)',
+    boxShadow: darkMode
+      ? 'inset 0 0.5px 0 rgba(255,255,255,0.08), 0 8px 32px -8px rgba(0,0,0,0.4)'
+      : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 8px 32px -8px rgba(0,0,0,0.08)',
+  } as React.CSSProperties
+}
+
+export function inputGlass(darkMode: boolean) {
+  return {
+    background: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+    border: darkMode ? '0.5px solid rgba(255,255,255,0.08)' : '0.5px solid rgba(0,0,0,0.06)',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
+  } as React.CSSProperties
 }
 
 export function sub(darkMode: boolean) {
@@ -17,29 +32,45 @@ export function sub(darkMode: boolean) {
 }
 
 export function chipStyle(darkMode: boolean, active: boolean) {
-  if (active) return 'bg-white text-zinc-900 shadow-md shadow-black/10'
-  return darkMode
-    ? 'bg-white/[0.08] text-white/60 hover:bg-white/[0.14]'
-    : 'bg-black/[0.05] text-zinc-500 hover:bg-black/[0.08]'
+  if (active) return {
+    background: darkMode ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.7)',
+    color: darkMode ? '#fff' : '#1c1c1e',
+    border: darkMode ? '0.5px solid rgba(255,255,255,0.2)' : '0.5px solid rgba(255,255,255,0.8)',
+    boxShadow: darkMode
+      ? 'inset 0 0.5px 0 rgba(255,255,255,0.15), 0 2px 8px rgba(0,0,0,0.2)'
+      : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(0,0,0,0.06)',
+  } as React.CSSProperties
+  return {
+    background: darkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+    color: darkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)',
+    border: darkMode ? '0.5px solid rgba(255,255,255,0.06)' : '0.5px solid rgba(0,0,0,0.04)',
+  } as React.CSSProperties
 }
 
-export function accentBtn(darkMode: boolean) {
-  return darkMode
-    ? 'bg-blue-500 text-white hover:bg-blue-400 shadow-lg shadow-blue-500/25'
-    : 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg shadow-blue-500/20'
+export function accentBtn(_darkMode: boolean) {
+  return {
+    background: 'rgba(0,122,255,0.85)',
+    color: '#fff',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
+    border: '0.5px solid rgba(0,122,255,0.5)',
+    boxShadow: '0 4px 16px -4px rgba(0,122,255,0.4)',
+  } as React.CSSProperties
 }
 
 export function toggleStyle(darkMode: boolean, active: boolean) {
-  if (active) return darkMode
-    ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25'
-    : 'bg-blue-500 text-white shadow-md shadow-blue-500/20'
-  return darkMode
-    ? 'bg-white/[0.08] text-white/50 hover:bg-white/[0.14]'
-    : 'bg-black/[0.05] text-zinc-500 hover:bg-black/[0.08]'
+  if (active) return {
+    background: 'rgba(0,122,255,0.85)',
+    color: '#fff',
+    border: '0.5px solid rgba(0,122,255,0.5)',
+    boxShadow: '0 2px 8px rgba(0,122,255,0.3)',
+  } as React.CSSProperties
+  return chipStyle(darkMode, false)
 }
 
 export function cellStyle(darkMode: boolean) {
-  return darkMode
-    ? 'bg-white/[0.05]'
-    : 'bg-black/[0.03]'
+  return {
+    background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+    border: darkMode ? '0.5px solid rgba(255,255,255,0.06)' : '0.5px solid rgba(0,0,0,0.04)',
+  } as React.CSSProperties
 }
