@@ -124,6 +124,21 @@ function App() {
             onPointerUp={onPointerUp}
             onPointerCancel={() => { setDragging(false); setDragProgress(null) }}
           >
+            {/* Outer container edge rainbow refraction */}
+            <div className="absolute inset-0 rounded-full pointer-events-none" style={{
+              background: `conic-gradient(from 180deg,
+                rgba(120,180,255,0.06) 0deg,
+                rgba(160,120,255,0.05) 60deg,
+                rgba(255,140,180,0.04) 120deg,
+                rgba(255,220,120,0.04) 180deg,
+                rgba(120,255,180,0.05) 240deg,
+                rgba(120,180,255,0.06) 300deg,
+                rgba(160,120,255,0.05) 360deg)`,
+              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              maskComposite: 'exclude',
+              WebkitMaskComposite: 'xor',
+              padding: 1,
+            }} />
             {/* Glass pill — morphs when pressed */}
             <div
               className="absolute left-0 pointer-events-none"
@@ -147,18 +162,61 @@ function App() {
                     ? 'background 150ms, border-radius 200ms, box-shadow 150ms, border 150ms'
                     : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
-                {/* Top rim specular */}
+                {/* Top rim specular — white highlight */}
                 <div className="absolute inset-x-0 top-0 h-[1px]" style={{
                   background: darkMode
-                    ? `linear-gradient(90deg, transparent 8%, rgba(255,255,255,${dragging ? 0.35 : 0.25}) 50%, transparent 92%)`
-                    : `linear-gradient(90deg, transparent 8%, rgba(255,255,255,${dragging ? 1 : 0.9}) 50%, transparent 92%)`,
+                    ? `linear-gradient(90deg, transparent 5%, rgba(255,255,255,${dragging ? 0.4 : 0.25}) 50%, transparent 95%)`
+                    : `linear-gradient(90deg, transparent 5%, rgba(255,255,255,${dragging ? 1 : 0.9}) 50%, transparent 95%)`,
                 }} />
-                {/* Top glow */}
-                <div className="absolute inset-x-0 top-0" style={{
-                  height: dragging ? '45%' : '35%',
+                {/* Bottom rim — subtle */}
+                <div className="absolute inset-x-0 bottom-0 h-[1px]" style={{
                   background: darkMode
-                    ? `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.08 : 0.04}) 0%, transparent 100%)`
-                    : `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.35 : 0.2}) 0%, transparent 100%)`,
+                    ? `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.08 : 0.04}) 50%, transparent 90%)`
+                    : `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.4 : 0.25}) 50%, transparent 90%)`,
+                }} />
+                {/* Left edge rainbow refraction */}
+                <div className="absolute left-0 inset-y-0 w-[3px]" style={{
+                  background: `linear-gradient(180deg,
+                    transparent 5%,
+                    rgba(120,180,255,${dragging ? 0.35 : 0.15}) 20%,
+                    rgba(160,120,255,${dragging ? 0.3 : 0.12}) 35%,
+                    rgba(255,140,180,${dragging ? 0.25 : 0.1}) 50%,
+                    rgba(255,200,100,${dragging ? 0.25 : 0.1}) 65%,
+                    rgba(120,255,180,${dragging ? 0.3 : 0.12}) 80%,
+                    transparent 95%)`,
+                  filter: 'blur(0.5px)',
+                }} />
+                {/* Right edge rainbow refraction */}
+                <div className="absolute right-0 inset-y-0 w-[3px]" style={{
+                  background: `linear-gradient(180deg,
+                    transparent 5%,
+                    rgba(120,255,180,${dragging ? 0.3 : 0.12}) 20%,
+                    rgba(255,200,100,${dragging ? 0.25 : 0.1}) 35%,
+                    rgba(255,140,180,${dragging ? 0.25 : 0.1}) 50%,
+                    rgba(160,120,255,${dragging ? 0.3 : 0.12}) 65%,
+                    rgba(120,180,255,${dragging ? 0.35 : 0.15}) 80%,
+                    transparent 95%)`,
+                  filter: 'blur(0.5px)',
+                }} />
+                {/* Top edge rainbow — subtle prismatic */}
+                <div className="absolute inset-x-0 top-0 h-[2px]" style={{
+                  background: `linear-gradient(90deg,
+                    transparent 5%,
+                    rgba(120,180,255,${dragging ? 0.3 : 0.1}) 20%,
+                    rgba(180,120,255,${dragging ? 0.25 : 0.08}) 35%,
+                    rgba(255,180,200,${dragging ? 0.2 : 0.06}) 50%,
+                    rgba(255,220,120,${dragging ? 0.2 : 0.06}) 65%,
+                    rgba(120,255,200,${dragging ? 0.25 : 0.08}) 80%,
+                    transparent 95%)`,
+                  filter: 'blur(0.5px)',
+                  marginTop: 1,
+                }} />
+                {/* Convex lens glow — top center bulge */}
+                <div className="absolute inset-x-0 top-0" style={{
+                  height: dragging ? '50%' : '35%',
+                  background: darkMode
+                    ? `radial-gradient(ellipse 80% 100% at 50% 0%, rgba(255,255,255,${dragging ? 0.1 : 0.05}) 0%, transparent 100%)`
+                    : `radial-gradient(ellipse 80% 100% at 50% 0%, rgba(255,255,255,${dragging ? 0.4 : 0.25}) 0%, transparent 100%)`,
                 }} />
               </div>
             </div>
