@@ -42,10 +42,6 @@ function App() {
   const translateX = pillPos * 100
   const pillWidthPct = 100 / TAB_COUNT
 
-  // Clip for distortion layer
-  const pillLeftPct = (pillPos / TAB_COUNT) * 100
-  const clipLeft = pillLeftPct + 0.8
-  const clipRight = 100 - (pillLeftPct + pillWidthPct) + 0.8
 
   function clientXToProgress(clientX: number): number {
     const el = containerRef.current
@@ -175,30 +171,6 @@ function App() {
               })}
             </div>
 
-            {/* Distortion layer — same color, scaled up, clipped to pill = edge warp effect */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-10"
-              style={{
-                clipPath: `inset(3px ${clipRight}% 3px ${clipLeft}% round 9999px)`,
-                transition: dragging ? 'clip-path 40ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
-              }}>
-              <div className="flex h-full"
-                style={{
-                  transform: `scale(${dragging ? 1.12 : 1.06})`,
-                  transformOrigin: `${(pillPos + 0.5) / TAB_COUNT * 100}% 50%`,
-                  transition: dragging ? 'transform-origin 40ms' : 'transform 600ms, transform-origin 600ms',
-                }}>
-                {TABS.map((t) => {
-                  const isActive = tab === t.id
-                  return (
-                    <div key={t.id} className="flex-1 flex flex-col items-center justify-center gap-1"
-                      style={{ color: dimColor }}>
-                      <span className="flex">{isActive ? t.filled : t.outlined}</span>
-                      <span style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.02em' }}>{t.label}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
 
             {/* Glass pill ON TOP of icons — backdrop-filter brightens icons underneath */}
             <div
