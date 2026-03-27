@@ -70,7 +70,7 @@ function App() {
   }
 
   const bg = darkMode ? 'text-white' : 'text-zinc-900'
-  const dimColor = darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
+  const dimColor = darkMode ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)'
 
   // Pill morphs: when pressing, pill expands horizontally (wider capsule)
   const pillScale = dragging ? 'scaleX(1.15)' : 'scaleX(1)'
@@ -79,8 +79,8 @@ function App() {
     ? (dragging ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.01)')
     : (dragging ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.02)')
   const pillBlur = dragging
-    ? `brightness(${darkMode ? 4 : 1.8}) saturate(3) contrast(1.15)`
-    : `brightness(${darkMode ? 3 : 1.5}) saturate(2.5) contrast(1.1)`
+    ? `brightness(${darkMode ? 8 : 3}) saturate(3) contrast(1.2)`
+    : `brightness(${darkMode ? 6 : 2.5}) saturate(2.5) contrast(1.15)`
   // Depth: strong layered shadows
   const pillShadow = darkMode
     ? (dragging
