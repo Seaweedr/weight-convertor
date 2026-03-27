@@ -108,7 +108,7 @@ function App() {
          inset 0 0.5px 0 rgba(255,255,255,0.8),
          0 0 0 0.5px rgba(0,0,0,0.04),
          0 2px 8px rgba(0,0,0,0.05)`)
-  const pillBorder = 'none' // border replaced by inset shadows for thick glass look
+  // border replaced by inset shadows for thick glass look
 
   return (
     <div className={`h-svh ${bg}`}>
