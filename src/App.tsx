@@ -142,9 +142,25 @@ function App() {
               WebkitMaskComposite: 'xor',
               padding: 1,
             }} />
-            {/* Glass pill — morphs when pressed */}
+            {/* Icons layer (rendered first = below in z-order) */}
+            <div className="relative flex">
+              {TABS.map((t) => {
+                const isActive = tab === t.id
+                return (
+                  <button key={t.id}
+                    onClick={() => { if (!dragging) setTab(t.id) }}
+                    className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
+                    style={{ color: dimColor }}>
+                    <span className="flex">{isActive ? t.filled : t.outlined}</span>
+                    <span style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.02em' }}>{t.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Glass pill ON TOP of icons — backdrop-filter brightens icons underneath */}
             <div
-              className="absolute left-0 pointer-events-none"
+              className="absolute left-0 pointer-events-none z-20"
               style={{
                 width: `${pillWidthPct}%`,
                 top: dragging ? -5 : 3,
@@ -164,23 +180,22 @@ function App() {
                     ? 'background 150ms, box-shadow 150ms, backdrop-filter 150ms'
                     : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
-                {/* Specular highlight — top white shine */}
-                <div className="absolute inset-x-0 top-0 h-[1px] pointer-events-none" style={{
+                {/* Specular top shine */}
+                <div className="absolute inset-x-0 top-0 h-[1px]" style={{
                   background: darkMode
                     ? `linear-gradient(90deg, transparent 15%, rgba(255,255,255,${dragging ? 0.35 : 0.2}) 50%, transparent 85%)`
                     : `linear-gradient(90deg, transparent 15%, rgba(255,255,255,${dragging ? 0.9 : 0.7}) 50%, transparent 85%)`,
                 }} />
-
-                {/* Convex lens center brightening */}
-                <div className="absolute inset-0 pointer-events-none" style={{
+                {/* Center lens brightening */}
+                <div className="absolute inset-0" style={{
                   background: `radial-gradient(ellipse 60% 70% at 50% 45%,
-                    rgba(255,255,255,${darkMode ? (dragging ? 0.05 : 0.02) : (dragging ? 0.1 : 0.05)}) 0%,
+                    rgba(255,255,255,${darkMode ? (dragging ? 0.04 : 0.02) : (dragging ? 0.08 : 0.04)}) 0%,
                     transparent 100%)`,
                 }} />
               </div>
 
-              {/* Natural glass refraction — conic gradient border shimmer */}
-              <div className="absolute inset-x-[2px] inset-y-[-1px] pointer-events-none" style={{
+              {/* Conic shimmer refraction edge */}
+              <div className="absolute inset-x-[2px] inset-y-[-1px]" style={{
                 borderRadius: 9999,
                 background: `conic-gradient(from ${dragging ? 200 : 210}deg,
                   rgba(140,200,255,${dragging ? 0.15 : 0.04}) 0deg,
@@ -201,22 +216,6 @@ function App() {
                 filter: `blur(${dragging ? 1 : 0.5}px)`,
                 transition: dragging ? 'none' : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }} />
-            </div>
-
-            {/* Single icon layer — glass pill's backdrop-filter handles the visual change */}
-            <div className="relative flex">
-              {TABS.map((t) => {
-                const isActive = tab === t.id
-                return (
-                  <button key={t.id}
-                    onClick={() => { if (!dragging) setTab(t.id) }}
-                    className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
-                    style={{ color: dimColor }}>
-                    <span className="flex">{isActive ? t.filled : t.outlined}</span>
-                    <span style={{ fontSize: 10, fontWeight: 400, letterSpacing: '0.02em' }}>{t.label}</span>
-                  </button>
-                )
-              })}
             </div>
           </div>
         </div>
