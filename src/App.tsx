@@ -50,9 +50,8 @@ function App() {
       </div>
 
       {/* Liquid Glass Tab Bar */}
-      <nav className={`flex-shrink-0 ${darkMode ? 'bg-black' : 'bg-zinc-100'}`}
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        <div className="px-2 py-1">
+      <nav className="flex-shrink-0">
+        <div className="px-2 pb-1">
           <div
             className={`relative rounded-2xl overflow-hidden ${
               darkMode
