@@ -128,7 +128,7 @@ export default function PlateCalc({ darkMode }: { darkMode: boolean }) {
         <div className="flex justify-center gap-1.5 mb-4">
           {(['lb', 'kg'] as const).map(u => (
             <button key={u} onClick={() => setUnit(u)}
-              className={`px-5 py-1.5 rounded-full text-sm font-semibold uppercase transition-all cursor-pointer ${toggleStyle(darkMode, unit === u)}`}>
+              className={`px-5 py-2 rounded-full text-sm font-semibold uppercase transition-all cursor-pointer ${toggleStyle(darkMode, unit === u)}`}>
               {u}
             </button>
           ))}

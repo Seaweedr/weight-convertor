@@ -112,7 +112,7 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
           {running ? '暫停' : remaining === 0 ? '重新開始' : '開始'}
         </button>
         <button onClick={reset}
-          className={`px-6 py-2.5 rounded-full font-semibold text-base transition-all cursor-pointer ${
+          className={`px-8 py-2.5 rounded-full font-semibold text-base transition-all cursor-pointer ${
             darkMode ? 'bg-white/[0.08] text-white/50' : 'bg-black/[0.05] text-zinc-500'
           }`}>
           重置
@@ -123,7 +123,7 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
       <div className="flex flex-wrap justify-center gap-2">
         {PRESETS.map(sec => (
           <button key={sec} onClick={() => selectPreset(sec)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${chipStyle(darkMode, duration === sec && !running)}`}>
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${chipStyle(darkMode, duration === sec && !running)}`}>
             {formatTime(sec)}
           </button>
         ))}
