@@ -34,6 +34,7 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('wc-dark-mode', String(darkMode))
+    document.documentElement.className = darkMode ? 'dark-bg' : 'light-bg'
   }, [darkMode])
 
   const tabIdx = TABS.findIndex(t => t.id === tab)
@@ -74,9 +75,7 @@ function App() {
     setDragProgress(null)
   }
 
-  const bg = darkMode
-    ? 'bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 text-white'
-    : 'bg-gradient-to-b from-zinc-100 via-white to-zinc-100 text-zinc-900'
+  const bg = darkMode ? 'text-white' : 'text-zinc-900'
 
   const dimColor = darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
   const brightColor = darkMode ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,0.85)'
@@ -98,13 +97,13 @@ function App() {
             ref={containerRef}
             className="relative rounded-2xl overflow-hidden select-none touch-none"
             style={{
-              background: darkMode ? 'rgba(30,30,32,0.7)' : 'rgba(255,255,255,0.5)',
-              backdropFilter: 'blur(50px) saturate(1.8)',
-              WebkitBackdropFilter: 'blur(50px) saturate(1.8)',
-              border: darkMode ? '0.5px solid rgba(255,255,255,0.08)' : '0.5px solid rgba(255,255,255,0.6)',
+              background: darkMode ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.45)',
+              backdropFilter: 'blur(40px) saturate(1.6)',
+              WebkitBackdropFilter: 'blur(40px) saturate(1.6)',
+              border: darkMode ? '0.5px solid rgba(255,255,255,0.08)' : '0.5px solid rgba(255,255,255,0.65)',
               boxShadow: darkMode
-                ? 'inset 0 0.5px 0 rgba(255,255,255,0.06), 0 -2px 20px rgba(0,0,0,0.3)'
-                : 'inset 0 0.5px 0 rgba(255,255,255,0.8), 0 -2px 20px rgba(0,0,0,0.06)',
+                ? 'inset 0 0.5px 0 rgba(255,255,255,0.06), 0 8px 32px -8px rgba(0,0,0,0.5)'
+                : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 8px 32px -8px rgba(0,0,0,0.08)',
             }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}

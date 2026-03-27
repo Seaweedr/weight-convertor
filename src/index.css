@@ -6,21 +6,25 @@ html, body, #root {
   min-height: 100svh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
 }
 
-/* Dark mode base */
 html {
-  background: #09090b;
   color-scheme: dark light;
 }
 
-/* Remove tap highlight on mobile */
+/* Dark mode gradient background */
+html.dark-bg {
+  background: linear-gradient(145deg, #0c0c14 0%, #111125 35%, #0e1520 65%, #0a0a12 100%);
+}
+html.light-bg {
+  background: linear-gradient(145deg, #e8e4ef 0%, #dde0f0 35%, #e5e8f2 65%, #ece8f0 100%);
+}
+
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Smooth scrolling */
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth; }
 }
