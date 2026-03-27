@@ -31,7 +31,6 @@ function App() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [dragging, setDragging] = useState(false)
   const [dragProgress, setDragProgress] = useState<number | null>(null)
-  const [pressedIdx, setPressedIdx] = useState<number | null>(null)
 
   useEffect(() => {
     localStorage.setItem('wc-dark-mode', String(darkMode))
@@ -40,16 +39,13 @@ function App() {
 
   const tabIdx = TABS.findIndex(t => t.id === tab)
   const pillPos = dragging && dragProgress !== null ? dragProgress : tabIdx
-  const distFromCenter = Math.abs(pillPos - Math.round(pillPos))
-  const stretchScale = dragging ? 1 + distFromCenter * 0.3 : 1
   const translateX = pillPos * 100
-
-  // Clip-path for magnified layer
-  const pillLeftPct = (pillPos / TAB_COUNT) * 100
   const pillWidthPct = 100 / TAB_COUNT
+
+  // Clip for magnified layer
+  const pillLeftPct = (pillPos / TAB_COUNT) * 100
   const clipLeft = pillLeftPct + 0.8
   const clipRight = 100 - (pillLeftPct + pillWidthPct) + 0.8
-  const clipInset = `3px ${clipRight}% 3px ${clipLeft}%`
 
   function clientXToProgress(clientX: number): number {
     const el = containerRef.current
@@ -60,24 +56,13 @@ function App() {
     return Math.max(0, Math.min(TAB_COUNT - 1, progress))
   }
 
-  function getTabIdxFromX(clientX: number): number {
-    const el = containerRef.current
-    if (!el) return tabIdx
-    const rect = el.getBoundingClientRect()
-    const relX = clientX - rect.left
-    return Math.max(0, Math.min(TAB_COUNT - 1, Math.floor((relX / rect.width) * TAB_COUNT)))
-  }
-
   function onPointerDown(e: React.PointerEvent) {
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
     setDragging(true)
     setDragProgress(clientXToProgress(e.clientX))
-    setPressedIdx(getTabIdxFromX(e.clientX))
   }
   function onPointerMove(e: React.PointerEvent) {
-    if (!dragging) return
-    setDragProgress(clientXToProgress(e.clientX))
-    setPressedIdx(getTabIdxFromX(e.clientX))
+    if (dragging) setDragProgress(clientXToProgress(e.clientX))
   }
   function onPointerUp(e: React.PointerEvent) {
     if (!dragging) return
@@ -85,17 +70,28 @@ function App() {
     const idx = Math.max(0, Math.min(TAB_COUNT - 1, Math.round(clientXToProgress(e.clientX))))
     setTab(TABS[idx].id)
     setDragProgress(null)
-    setPressedIdx(null)
-  }
-  function onPointerCancel() {
-    setDragging(false)
-    setDragProgress(null)
-    setPressedIdx(null)
   }
 
   const bg = darkMode ? 'text-white' : 'text-zinc-900'
   const dimColor = darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
   const brightColor = darkMode ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,0.85)'
+
+  // Pill morphs: when pressing, pill gets taller and more opaque
+  const pillScale = dragging ? 'scaleY(1.2) scaleX(1.05)' : 'scaleY(1) scaleX(1)'
+  const pillBg = darkMode
+    ? (dragging ? 'rgba(35,35,40,0.9)' : 'rgba(255,255,255,0.08)')
+    : (dragging ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.55)')
+  const pillBlur = dragging ? 'blur(30px) brightness(1.5) saturate(2)' : `blur(20px) brightness(${darkMode ? 1.3 : 1.02}) saturate(1.8)`
+  const pillShadow = darkMode
+    ? (dragging
+      ? 'inset 0 0.5px 0 rgba(255,255,255,0.2), inset 0 -0.5px 0 rgba(255,255,255,0.05), 0 0 0 0.5px rgba(255,255,255,0.12), 0 8px 24px -4px rgba(0,0,0,0.6)'
+      : 'inset 0 0.5px 0 rgba(255,255,255,0.15), 0 0 0 0.5px rgba(255,255,255,0.08)')
+    : (dragging
+      ? 'inset 0 0.5px 0 rgba(255,255,255,0.95), 0 1px 6px rgba(0,0,0,0.1), 0 8px 24px -4px rgba(0,0,0,0.1)'
+      : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 1px 4px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(255,255,255,0.5)')
+  const pillBorder = darkMode
+    ? (dragging ? '0.5px solid rgba(255,255,255,0.18)' : '0.5px solid rgba(255,255,255,0.1)')
+    : (dragging ? '0.5px solid rgba(255,255,255,0.9)' : '0.5px solid rgba(255,255,255,0.6)')
 
   return (
     <div className={`h-svh ${bg}`}>
@@ -107,7 +103,6 @@ function App() {
         {tab === 'settings' && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
       </div>
 
-      {/* Liquid Glass Tab Bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-50">
         <div className="px-3 pb-1">
           <div
@@ -125,135 +120,84 @@ function App() {
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
-            onPointerCancel={onPointerCancel}
+            onPointerCancel={() => { setDragging(false); setDragProgress(null) }}
           >
-            {/* Sliding glass pill (selected state) */}
+            {/* Glass pill — morphs when pressed */}
             <div
-              className="absolute top-[3px] bottom-[3px] left-0 pointer-events-none"
+              className="absolute left-0 pointer-events-none"
               style={{
                 width: `${pillWidthPct}%`,
-                transform: `translateX(${translateX}%) scaleX(${stretchScale})`,
-                transition: dragging ? 'none' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1)',
+                top: dragging ? -4 : 3,
+                bottom: dragging ? -4 : 3,
+                transform: `translateX(${translateX}%) ${pillScale}`,
+                transition: dragging ? 'top 200ms, bottom 200ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), top 200ms, bottom 200ms',
               }}
             >
-              <div className="absolute inset-x-[3px] inset-y-0 rounded-[12px] overflow-hidden"
+              <div className="absolute inset-x-[3px] inset-y-0 overflow-hidden"
                 style={{
-                  background: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.55)',
-                  backdropFilter: `blur(20px) brightness(${darkMode ? 1.3 : 1.02}) saturate(1.8)`,
-                  WebkitBackdropFilter: `blur(20px) brightness(${darkMode ? 1.3 : 1.02}) saturate(1.8)`,
-                  boxShadow: darkMode
-                    ? 'inset 0 0.5px 0 rgba(255,255,255,0.15), 0 0 0 0.5px rgba(255,255,255,0.08)'
-                    : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 1px 4px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(255,255,255,0.5)',
+                  borderRadius: dragging ? 18 : 12,
+                  background: pillBg,
+                  backdropFilter: pillBlur,
+                  WebkitBackdropFilter: pillBlur,
+                  boxShadow: pillShadow,
+                  border: pillBorder,
+                  transition: dragging
+                    ? 'background 150ms, border-radius 200ms, box-shadow 150ms, border 150ms'
+                    : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
-                {/* Top rim highlight */}
+                {/* Top rim specular */}
                 <div className="absolute inset-x-0 top-0 h-[1px]" style={{
                   background: darkMode
-                    ? 'linear-gradient(90deg, transparent 8%, rgba(255,255,255,0.3) 50%, transparent 92%)'
-                    : 'linear-gradient(90deg, transparent 8%, rgba(255,255,255,0.9) 50%, transparent 92%)',
+                    ? `linear-gradient(90deg, transparent 8%, rgba(255,255,255,${dragging ? 0.35 : 0.25}) 50%, transparent 92%)`
+                    : `linear-gradient(90deg, transparent 8%, rgba(255,255,255,${dragging ? 1 : 0.9}) 50%, transparent 92%)`,
                 }} />
-                <div className="absolute inset-x-0 top-0 h-[35%]" style={{
+                {/* Top glow */}
+                <div className="absolute inset-x-0 top-0" style={{
+                  height: dragging ? '45%' : '35%',
                   background: darkMode
-                    ? 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%)'
-                    : 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%)',
+                    ? `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.08 : 0.04}) 0%, transparent 100%)`
+                    : `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.35 : 0.2}) 0%, transparent 100%)`,
                 }} />
               </div>
             </div>
 
-            {/* Tab buttons */}
+            {/* Base icons (dim, outlined) */}
             <div className="relative flex">
-              {TABS.map((t, i) => {
+              {TABS.map((t) => {
                 const isActive = tab === t.id
-                const isPressed = pressedIdx === i && dragging
-
                 return (
-                  <div key={t.id} className="flex-1 relative">
-                    {/* Press magnifier glass bubble */}
-                    {isPressed && (
-                      <div className="absolute inset-x-[2px] -top-[52px] z-30 flex items-center justify-center pointer-events-none"
-                        style={{
-                          height: 48,
-                          borderRadius: 16,
-                          background: darkMode
-                            ? 'rgba(20,20,24,0.85)'
-                            : 'rgba(240,240,245,0.9)',
-                          backdropFilter: 'blur(30px) saturate(1.8)',
-                          WebkitBackdropFilter: 'blur(30px) saturate(1.8)',
-                          border: darkMode
-                            ? '0.5px solid rgba(255,255,255,0.12)'
-                            : '0.5px solid rgba(255,255,255,0.7)',
-                          boxShadow: darkMode
-                            ? 'inset 0 0.5px 0 rgba(255,255,255,0.1), 0 8px 24px -4px rgba(0,0,0,0.6)'
-                            : 'inset 0 0.5px 0 rgba(255,255,255,0.9), 0 8px 24px -4px rgba(0,0,0,0.12)',
-                          animation: 'popIn 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                        }}
-                      >
-                        <span style={{
-                          color: darkMode ? '#fff' : '#1c1c1e',
-                          transform: 'scale(1.3)',
-                          display: 'flex',
-                          filter: darkMode ? 'drop-shadow(0 0 4px rgba(255,255,255,0.15))' : 'none',
-                        }}>
-                          {t.filled}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Pointer triangle from bubble to tab */}
-                    {isPressed && (
-                      <div className="absolute left-1/2 -translate-x-1/2 -top-[6px] z-30 pointer-events-none">
-                        <div style={{
-                          width: 0, height: 0,
-                          borderLeft: '6px solid transparent',
-                          borderRight: '6px solid transparent',
-                          borderTop: darkMode ? '6px solid rgba(20,20,24,0.85)' : '6px solid rgba(240,240,245,0.9)',
-                        }} />
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => { if (!dragging) setTab(t.id) }}
-                      className="w-full flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative z-10 select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
-                      style={{
-                        color: isActive ? (darkMode ? 'rgba(255,255,255,0.95)' : 'rgba(0,0,0,0.8)') : dimColor,
-                        transition: dragging ? 'color 40ms' : 'color 300ms',
-                      }}
-                    >
-                      <span style={{
-                        transform: isPressed ? 'scale(1.15)' : isActive ? 'scale(1.05)' : 'scale(1)',
-                        transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                        display: 'flex',
-                      }}>
-                        {isActive ? t.filled : t.outlined}
-                      </span>
-                      <span style={{
-                        fontSize: 10,
-                        fontWeight: isActive ? 500 : 400,
-                        letterSpacing: '0.02em',
-                        opacity: isPressed ? 0.5 : 1,
-                        transition: 'opacity 150ms',
-                      }}>
-                        {t.label}
-                      </span>
-                    </button>
-                  </div>
+                  <button key={t.id}
+                    onClick={() => { if (!dragging) setTab(t.id) }}
+                    className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative z-10 select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
+                    style={{ color: isActive ? (darkMode ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.7)') : dimColor }}>
+                    <span className="flex">{isActive ? t.filled : t.outlined}</span>
+                    <span style={{ fontSize: 10, fontWeight: isActive ? 500 : 400, letterSpacing: '0.02em' }}>{t.label}</span>
+                  </button>
                 )
               })}
             </div>
 
-            {/* Magnified layer clipped to pill */}
-            <div
-              className="absolute inset-0 pointer-events-none"
+            {/* Magnified layer — clipped to pill, icons bigger + brighter */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"
               style={{
-                clipPath: `inset(${clipInset} round 12px)`,
-                transition: dragging ? 'none' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
-              }}
-            >
+                clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round ${dragging ? 18 : 12}px)`,
+                transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
+              }}>
               <div className="flex h-full">
                 {TABS.map((t) => (
                   <div key={t.id} className="flex-1 flex flex-col items-center justify-center gap-1"
                     style={{ color: brightColor }}>
-                    <span className="flex" style={{ transform: 'scale(1.1)' }}>{t.filled}</span>
-                    <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.02em' }}>{t.label}</span>
+                    <span className="flex" style={{
+                      transform: dragging ? 'scale(1.25)' : 'scale(1.1)',
+                      filter: dragging && darkMode ? 'drop-shadow(0 0 6px rgba(255,255,255,0.2))' : 'none',
+                      transition: 'transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), filter 200ms',
+                    }}>{t.filled}</span>
+                    <span style={{
+                      fontSize: dragging ? 11 : 10,
+                      fontWeight: 600,
+                      letterSpacing: '0.02em',
+                      transition: 'font-size 200ms',
+                    }}>{t.label}</span>
                   </div>
                 ))}
               </div>
@@ -261,14 +205,6 @@ function App() {
           </div>
         </div>
       </nav>
-
-      {/* Pop-in animation */}
-      <style>{`
-        @keyframes popIn {
-          0% { transform: scale(0.5) translateY(8px); opacity: 0; }
-          100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-      `}</style>
     </div>
   )
 }
