@@ -61,7 +61,7 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
 
       <div className="flex gap-3 mb-10">
         <button onClick={toggle}
-          className="px-8 py-2.5 rounded-full font-semibold text-base cursor-pointer transition-transform active:scale-95"
+          className="px-10 py-3.5 rounded-full font-semibold text-base cursor-pointer transition-transform active:scale-95"
           style={{
             background: running ? 'rgba(249,115,22,0.85)' : done ? 'rgba(239,68,68,0.85)' : 'rgba(52,211,153,0.85)',
             color: '#fff',
@@ -70,7 +70,7 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
           {running ? '暫停' : done ? '重新開始' : '開始'}
         </button>
         <button onClick={reset}
-          className="px-8 py-2.5 rounded-full font-semibold text-base cursor-pointer transition-transform active:scale-95"
+          className="px-10 py-3.5 rounded-full font-semibold text-base cursor-pointer transition-transform active:scale-95"
           style={chipStyle(darkMode, false)}>
           重置
         </button>
