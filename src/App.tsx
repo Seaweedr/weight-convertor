@@ -187,22 +187,22 @@ function App() {
               <div className="absolute inset-x-[2px] inset-y-[-1px] pointer-events-none" style={{
                 borderRadius: 9999,
                 background: `conic-gradient(from ${dragging ? 200 : 210}deg,
-                  rgba(140,200,255,${dragging ? 0.5 : 0.1}) 0deg,
-                  rgba(100,160,255,${dragging ? 0.7 : 0.15}) 40deg,
-                  rgba(170,120,255,${dragging ? 0.65 : 0.12}) 80deg,
-                  rgba(220,100,220,${dragging ? 0.5 : 0.08}) 120deg,
+                  rgba(140,200,255,${dragging ? 0.15 : 0.04}) 0deg,
+                  rgba(100,160,255,${dragging ? 0.2 : 0.06}) 40deg,
+                  rgba(170,120,255,${dragging ? 0.18 : 0.05}) 80deg,
+                  rgba(220,100,220,${dragging ? 0.12 : 0.03}) 120deg,
                   transparent 155deg,
                   transparent 185deg,
-                  rgba(255,200,80,${dragging ? 0.5 : 0.08}) 210deg,
-                  rgba(255,150,100,${dragging ? 0.65 : 0.12}) 250deg,
-                  rgba(255,100,140,${dragging ? 0.7 : 0.15}) 290deg,
-                  rgba(200,100,200,${dragging ? 0.55 : 0.1}) 330deg,
-                  rgba(140,200,255,${dragging ? 0.5 : 0.1}) 360deg)`,
+                  rgba(255,200,80,${dragging ? 0.12 : 0.03}) 210deg,
+                  rgba(255,150,100,${dragging ? 0.18 : 0.05}) 250deg,
+                  rgba(255,100,140,${dragging ? 0.2 : 0.06}) 290deg,
+                  rgba(200,100,200,${dragging ? 0.15 : 0.04}) 330deg,
+                  rgba(140,200,255,${dragging ? 0.15 : 0.04}) 360deg)`,
                 mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
                 maskComposite: 'exclude',
                 WebkitMaskComposite: 'xor',
-                padding: dragging ? 4 : 1.5,
-                filter: `blur(${dragging ? 1.5 : 0.5}px)`,
+                padding: dragging ? 2.5 : 1,
+                filter: `blur(${dragging ? 1 : 0.5}px)`,
                 transition: dragging ? 'none' : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }} />
             </div>
@@ -231,7 +231,7 @@ function App() {
               }}>
               <div className="flex h-full"
                 style={{
-                  transform: `scale(${dragging ? 1.08 : 1.05})`,
+                  transform: `scale(${dragging ? 1.15 : 1.05})`,
                   transformOrigin: `${(pillPos + 0.5) / TAB_COUNT * 100}% 50%`,
                   transition: dragging ? 'transform-origin 40ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), transform-origin 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
