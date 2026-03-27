@@ -99,7 +99,7 @@ export default function Converter({ darkMode }: { darkMode: boolean }) {
 
       {/* History */}
       {history.length > 0 && (
-        <div className="w-full max-w-sm mt-4">
+        <div className={`w-full max-w-sm mt-5 pt-5 border-t ${darkMode ? 'border-white/[0.08]' : 'border-black/[0.06]'}`}>
           <div className="flex items-center justify-between mb-2">
             <p className={`text-xs ${s}`}>歷史紀錄</p>
             <button onClick={() => setHistory([])} className={`text-xs ${s} hover:text-white transition-colors cursor-pointer`}>清除</button>
