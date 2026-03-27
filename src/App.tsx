@@ -101,7 +101,7 @@ function App() {
                   <button
                     key={t.id}
                     onClick={() => setTab(t.id)}
-                    className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium tracking-wide cursor-pointer relative z-10 transition-all duration-300 ${
+                    className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-3 text-[10px] font-medium tracking-wide cursor-pointer relative z-10 transition-all duration-300 select-none [-webkit-touch-callout:none] [-webkit-user-select:none] ${
                       isActive
                         ? darkMode ? 'text-white' : 'text-zinc-800'
                         : darkMode ? 'text-white/25' : 'text-zinc-400'
