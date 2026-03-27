@@ -80,11 +80,11 @@ function App() {
   const pillScale = dragging ? 'scaleX(1.15)' : 'scaleX(1)'
   // Glass: high refraction (brightness/saturate), high depth (shadows), minimal frost (blur ~0)
   const pillBg = darkMode
-    ? (dragging ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.03)')
-    : (dragging ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.1)')
+    ? (dragging ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.01)')
+    : (dragging ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.02)')
   const pillBlur = dragging
-    ? `blur(0.5px) brightness(${darkMode ? 3 : 1.4}) saturate(3) contrast(1.1)`
-    : `blur(0.5px) brightness(${darkMode ? 2 : 1.15}) saturate(2.5) contrast(1.05)`
+    ? `brightness(${darkMode ? 3 : 1.4}) saturate(3) contrast(1.1)`
+    : `brightness(${darkMode ? 2 : 1.15}) saturate(2.5) contrast(1.05)`
   // Depth: strong layered shadows
   const pillShadow = darkMode
     ? (dragging
