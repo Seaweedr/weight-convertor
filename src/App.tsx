@@ -51,7 +51,7 @@ function App() {
 
       {/* Liquid Glass Tab Bar */}
       <nav className="flex-shrink-0">
-        <div className="px-2 pb-1">
+        <div className="px-2">
           <div
             className={`relative rounded-2xl overflow-hidden ${
               darkMode
@@ -101,7 +101,7 @@ function App() {
                   <button
                     key={t.id}
                     onClick={() => setTab(t.id)}
-                    className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-3.5 text-[10px] font-medium tracking-wide cursor-pointer relative z-10 transition-all duration-300 ${
+                    className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium tracking-wide cursor-pointer relative z-10 transition-all duration-300 ${
                       isActive
                         ? darkMode ? 'text-white' : 'text-zinc-800'
                         : darkMode ? 'text-white/25' : 'text-zinc-400'
