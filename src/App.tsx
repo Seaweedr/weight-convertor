@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { MdSwapHoriz, MdFitnessCenter, MdTrendingUp, MdTimer, MdMoreHoriz } from 'react-icons/md'
 import Converter from './pages/Converter'
 import PlateCalc from './pages/PlateCalc'
@@ -17,7 +17,6 @@ const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
 ]
 
 const TAB_COUNT = TABS.length
-const TAB_WIDTH_PCT = 100 / TAB_COUNT
 
 function App() {
   const [tab, setTab] = useState<Tab>('converter')
@@ -26,13 +25,62 @@ function App() {
     return saved !== null ? saved === 'true' : true
   })
 
+  // Drag state
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [dragging, setDragging] = useState(false)
+  const [dragProgress, setDragProgress] = useState<number | null>(null) // 0~4 continuous position
+  const dragStartRef = useRef({ x: 0, startIdx: 0 })
+
   useEffect(() => {
     localStorage.setItem('wc-dark-mode', String(darkMode))
   }, [darkMode])
 
   const tabIdx = TABS.findIndex(t => t.id === tab)
-  // translateX is relative to the pill's own width, so 100% = 1 tab width
-  const pillTranslateX = tabIdx * 100
+
+  // Pill position: during drag use continuous dragProgress, otherwise snap to tab index
+  const pillPos = dragging && dragProgress !== null ? dragProgress : tabIdx
+  // Stretch effect: how far from nearest integer (tab center)
+  const nearestTab = Math.round(pillPos)
+  const distFromCenter = Math.abs(pillPos - nearestTab)
+  const stretchScale = dragging ? 1 + distFromCenter * 0.4 : 1
+  // translateX in % relative to pill's own width
+  const translateX = pillPos * 100
+
+  // Convert clientX to continuous tab index (0~4)
+  function clientXToProgress(clientX: number): number {
+    const el = containerRef.current
+    if (!el) return tabIdx
+    const rect = el.getBoundingClientRect()
+    const relX = clientX - rect.left
+    const progress = (relX / rect.width) * TAB_COUNT - 0.5
+    return Math.max(0, Math.min(TAB_COUNT - 1, progress))
+  }
+
+  function onPointerDown(e: React.PointerEvent) {
+    const el = e.currentTarget as HTMLElement
+    el.setPointerCapture(e.pointerId)
+    setDragging(true)
+    const progress = clientXToProgress(e.clientX)
+    setDragProgress(progress)
+    dragStartRef.current = { x: e.clientX, startIdx: tabIdx }
+  }
+
+  function onPointerMove(e: React.PointerEvent) {
+    if (!dragging) return
+    const progress = clientXToProgress(e.clientX)
+    setDragProgress(progress)
+  }
+
+  function onPointerUp(e: React.PointerEvent) {
+    if (!dragging) return
+    setDragging(false)
+    // Snap to nearest tab
+    const progress = clientXToProgress(e.clientX)
+    const targetIdx = Math.round(progress)
+    const clamped = Math.max(0, Math.min(TAB_COUNT - 1, targetIdx))
+    setTab(TABS[clamped].id)
+    setDragProgress(null)
+  }
 
   const bg = darkMode
     ? 'bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 text-white'
@@ -49,46 +97,55 @@ function App() {
         {tab === 'settings' && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
       </div>
 
-      {/* Liquid Glass Tab Bar — fixed to bottom */}
+      {/* Liquid Glass Tab Bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-50">
         <div className="px-2 pb-0.5">
           <div
-            className={`relative rounded-xl overflow-hidden ${
+            ref={containerRef}
+            className={`relative rounded-xl overflow-hidden select-none touch-none ${
               darkMode
                 ? 'bg-white/[0.06] border border-white/[0.08]'
                 : 'bg-white/50 border border-white/70 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.08)]'
             }`}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={() => { setDragging(false); setDragProgress(null) }}
           >
-            {/* Liquid glass sliding pill — uses transform for reliable animation */}
+            {/* Liquid glass sliding pill */}
             <div
-              className="absolute top-[5px] bottom-[5px] left-0 pointer-events-none"
+              className="absolute top-[4px] bottom-[4px] left-0 pointer-events-none"
               style={{
-                width: `${TAB_WIDTH_PCT}%`,
-                transform: `translateX(${pillTranslateX}%)`,
-                transition: 'transform 500ms cubic-bezier(0.32, 0.72, 0, 1)',
+                width: `${100 / TAB_COUNT}%`,
+                transform: `translateX(${translateX}%) scaleX(${stretchScale})`,
+                transition: dragging
+                  ? 'none'
+                  : 'transform 500ms cubic-bezier(0.32, 0.72, 0, 1)',
               }}
             >
+              {/* Glass body */}
               <div
-                className="absolute inset-x-1 inset-y-0 rounded-[13px]"
+                className="absolute inset-x-1 inset-y-0 rounded-[11px]"
                 style={{
                   background: darkMode
-                    ? 'rgba(255,255,255,0.12)'
-                    : 'rgba(255,255,255,0.8)',
+                    ? `rgba(255,255,255,${dragging ? 0.16 : 0.12})`
+                    : `rgba(255,255,255,${dragging ? 0.9 : 0.8})`,
                   boxShadow: darkMode
-                    ? 'inset 0 1px 0 0 rgba(255,255,255,0.15), inset 0 -1px 0 0 rgba(255,255,255,0.05), 0 0 10px 2px rgba(255,255,255,0.04)'
-                    : 'inset 0 1px 0 0 rgba(255,255,255,1), 0 2px 6px -2px rgba(0,0,0,0.08)',
-                  border: darkMode ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(255,255,255,0.9)',
-                  backdropFilter: 'blur(20px)',
+                    ? `inset 0 1px 0 0 rgba(255,255,255,0.18), inset 0 -1px 0 0 rgba(255,255,255,0.05), 0 0 ${dragging ? 16 : 8}px ${dragging ? 3 : 1}px rgba(255,255,255,0.05)`
+                    : `inset 0 1px 0 0 rgba(255,255,255,1), 0 2px ${dragging ? 10 : 6}px -2px rgba(0,0,0,${dragging ? 0.12 : 0.08})`,
+                  border: darkMode ? '1px solid rgba(255,255,255,0.14)' : '1px solid rgba(255,255,255,0.9)',
+                  backdropFilter: 'blur(24px)',
+                  transition: dragging ? 'background 100ms, box-shadow 100ms' : 'all 500ms cubic-bezier(0.32, 0.72, 0, 1)',
                 }}
               />
               {/* Refraction highlight */}
               <div
-                className="absolute inset-x-1 top-0 h-[45%] rounded-t-[13px]"
+                className="absolute inset-x-1 top-0 h-[45%] pointer-events-none"
                 style={{
                   background: darkMode
-                    ? 'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%)'
-                    : 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%)',
-                  borderRadius: '13px 13px 50% 50%',
+                    ? 'linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%)'
+                    : 'linear-gradient(180deg, rgba(255,255,255,0.7) 0%, transparent 100%)',
+                  borderRadius: '11px 11px 50% 50%',
                 }}
               />
             </div>
@@ -100,7 +157,7 @@ function App() {
                 return (
                   <button
                     key={t.id}
-                    onClick={() => setTab(t.id)}
+                    onClick={() => { if (!dragging) setTab(t.id) }}
                     className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-3 text-[10px] font-medium tracking-wide cursor-pointer relative z-10 transition-all duration-300 select-none [-webkit-touch-callout:none] [-webkit-user-select:none] ${
                       isActive
                         ? darkMode ? 'text-white' : 'text-zinc-800'
