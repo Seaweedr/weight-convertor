@@ -194,36 +194,73 @@ function App() {
                     ? 'background 150ms, box-shadow 150ms, backdrop-filter 150ms'
                     : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
-                {/* Top specular shine — wide */}
-                <div className="absolute inset-x-0 top-0 h-[2px]" style={{
-                  background: darkMode
-                    ? `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 50%, transparent 90%)`
-                    : `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 1 : 0.85}) 50%, transparent 90%)`,
+                {/* === Liquid edge distortion — water droplet meniscus === */}
+
+                {/* Edge darkening ring — refraction bend at glass boundary */}
+                <div className="absolute inset-0" style={{
+                  background: `radial-gradient(ellipse 85% 75% at 50% 50%,
+                    transparent 60%,
+                    rgba(0,0,0,${darkMode ? (dragging ? 0.25 : 0.15) : (dragging ? 0.08 : 0.04)}) 82%,
+                    transparent 100%)`,
                 }} />
+
+                {/* Edge caustic bright ring — light concentrates at meniscus */}
+                <div className="absolute inset-0" style={{
+                  background: `radial-gradient(ellipse 90% 80% at 50% 50%,
+                    transparent 75%,
+                    rgba(255,255,255,${darkMode ? (dragging ? 0.2 : 0.1) : (dragging ? 0.25 : 0.12)}) 88%,
+                    transparent 95%)`,
+                }} />
+
+                {/* Top edge liquid caustic — bright line where water meets surface */}
+                <div className="absolute inset-x-0 top-0 h-[3px]" style={{
+                  background: darkMode
+                    ? `linear-gradient(90deg, transparent 5%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 30%, rgba(255,255,255,${dragging ? 0.6 : 0.35}) 50%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 70%, transparent 95%)`
+                    : `linear-gradient(90deg, transparent 5%, rgba(255,255,255,${dragging ? 1 : 0.8}) 30%, rgba(255,255,255,${dragging ? 1 : 0.9}) 50%, rgba(255,255,255,${dragging ? 1 : 0.8}) 70%, transparent 95%)`,
+                  filter: 'blur(0.5px)',
+                }} />
+
+                {/* Bottom edge — softer caustic */}
+                <div className="absolute inset-x-0 bottom-0 h-[2px]" style={{
+                  background: darkMode
+                    ? `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.15 : 0.08}) 50%, transparent 90%)`
+                    : `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.35 : 0.2}) 50%, transparent 90%)`,
+                  filter: 'blur(0.5px)',
+                }} />
+
+                {/* Left/Right edge caustics — vertical light bands */}
+                <div className="absolute left-0 inset-y-[10%] w-[3px]" style={{
+                  background: darkMode
+                    ? `linear-gradient(180deg, transparent 0%, rgba(255,255,255,${dragging ? 0.2 : 0.1}) 30%, rgba(255,255,255,${dragging ? 0.25 : 0.12}) 50%, rgba(255,255,255,${dragging ? 0.2 : 0.1}) 70%, transparent 100%)`
+                    : `linear-gradient(180deg, transparent 0%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 30%, rgba(255,255,255,${dragging ? 0.6 : 0.35}) 50%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 70%, transparent 100%)`,
+                  filter: 'blur(0.5px)',
+                }} />
+                <div className="absolute right-0 inset-y-[10%] w-[3px]" style={{
+                  background: darkMode
+                    ? `linear-gradient(180deg, transparent 0%, rgba(255,255,255,${dragging ? 0.2 : 0.1}) 30%, rgba(255,255,255,${dragging ? 0.25 : 0.12}) 50%, rgba(255,255,255,${dragging ? 0.2 : 0.1}) 70%, transparent 100%)`
+                    : `linear-gradient(180deg, transparent 0%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 30%, rgba(255,255,255,${dragging ? 0.6 : 0.35}) 50%, rgba(255,255,255,${dragging ? 0.5 : 0.3}) 70%, transparent 100%)`,
+                  filter: 'blur(0.5px)',
+                }} />
+
                 {/* Top crescent reflection */}
-                <div className="absolute inset-x-[10%] top-0" style={{
-                  height: dragging ? '45%' : '35%',
+                <div className="absolute inset-x-[8%] top-[2px]" style={{
+                  height: dragging ? '40%' : '30%',
                   background: darkMode
                     ? `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.1 : 0.05}) 0%, transparent 100%)`
-                    : `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.25 : 0.15}) 0%, transparent 100%)`,
+                    : `linear-gradient(180deg, rgba(255,255,255,${dragging ? 0.2 : 0.12}) 0%, transparent 100%)`,
                   borderRadius: '9999px 9999px 50% 50%',
                 }} />
-                {/* Bottom edge reflection */}
-                <div className="absolute inset-x-[15%] bottom-0 h-[1px]" style={{
-                  background: darkMode
-                    ? `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.12 : 0.06}) 50%, transparent 90%)`
-                    : `linear-gradient(90deg, transparent 10%, rgba(255,255,255,${dragging ? 0.3 : 0.2}) 50%, transparent 90%)`,
-                }} />
-                {/* Off-center highlight spot — simulates light source reflection */}
+
+                {/* Off-center highlight spot */}
                 <div className="absolute" style={{
-                  width: '30%',
-                  height: '40%',
-                  top: '10%',
-                  left: '15%',
+                  width: '25%',
+                  height: '35%',
+                  top: '12%',
+                  left: '18%',
                   background: `radial-gradient(ellipse at 50% 50%,
-                    rgba(255,255,255,${darkMode ? (dragging ? 0.08 : 0.04) : (dragging ? 0.15 : 0.08)}) 0%,
+                    rgba(255,255,255,${darkMode ? (dragging ? 0.08 : 0.04) : (dragging ? 0.12 : 0.06)}) 0%,
                     transparent 100%)`,
-                  filter: 'blur(2px)',
+                  filter: 'blur(3px)',
                 }} />
               </div>
 
