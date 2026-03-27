@@ -42,7 +42,7 @@ function App() {
   const translateX = pillPos * 100
   const pillWidthPct = 100 / TAB_COUNT
 
-  // Clip for magnified layer — must account for px-2 (8px) padding
+  // Clip for magnified layer
   const pillLeftPct = (pillPos / TAB_COUNT) * 100
   const clipLeft = pillLeftPct + 0.8
   const clipRight = 100 - (pillLeftPct + pillWidthPct) + 0.8
@@ -76,39 +76,18 @@ function App() {
   const dimColor = darkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)'
   const brightColor = darkMode ? 'rgba(255,255,255,1)' : 'rgba(0,0,0,0.85)'
 
-  // Pill morphs: when pressing, pill expands horizontally (wider capsule)
-  const pillScale = dragging ? 'scaleX(1.15)' : 'scaleX(1)'
-  // Glass material — thick glass look
+  // Pill glass styles — normal vs pressed (lens bubble)
+  const pillInsetX = dragging ? '0px' : '3px'
   const pillBg = darkMode
-    ? (dragging ? 'rgba(60,60,70,0.6)' : 'rgba(255,255,255,0.06)')
-    : (dragging ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.35)')
-  const pillBlur = dragging
-    ? `blur(2px) brightness(${darkMode ? 2 : 1.15}) saturate(2)`
-    : `blur(2px) brightness(${darkMode ? 1.4 : 1.05}) saturate(1.6)`
-  // Thick glass edge: multiple inset shadows simulate rim depth
-  const pillShadow = darkMode
-    ? (dragging
-      ? `inset 0 0 0 2px rgba(255,255,255,0.12),
-         inset 0 1px 0 rgba(255,255,255,0.3),
-         inset 0 -1px 0 rgba(255,255,255,0.06),
-         0 0 0 1px rgba(0,0,0,0.5),
-         0 4px 16px rgba(0,0,0,0.5),
-         0 12px 40px -8px rgba(0,0,0,0.4)`
-      : `inset 0 0 0 1.5px rgba(255,255,255,0.08),
-         inset 0 0.5px 0 rgba(255,255,255,0.15),
-         0 0 0 0.5px rgba(0,0,0,0.3),
-         0 2px 8px rgba(0,0,0,0.2)`)
-    : (dragging
-      ? `inset 0 0 0 2px rgba(255,255,255,0.5),
-         inset 0 1px 0 rgba(255,255,255,0.9),
-         0 0 0 1px rgba(0,0,0,0.06),
-         0 4px 16px rgba(0,0,0,0.1),
-         0 12px 40px -8px rgba(0,0,0,0.08)`
-      : `inset 0 0 0 1.5px rgba(255,255,255,0.4),
-         inset 0 0.5px 0 rgba(255,255,255,0.8),
-         0 0 0 0.5px rgba(0,0,0,0.04),
-         0 2px 8px rgba(0,0,0,0.05)`)
-  // border replaced by inset shadows for thick glass look
+    ? (dragging ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.06)')
+    : (dragging ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.35)')
+  const pillBackdrop = dragging
+    ? `blur(1px) brightness(${darkMode ? 1.8 : 1.1}) saturate(1.8)`
+    : `blur(1px) brightness(${darkMode ? 1.3 : 1.03}) saturate(1.6)`
+
+  // Pressed: expand into large oval lens bubble
+  const lensSize = 110 // px, diameter of the bubble
+  const pressedIdx = dragging ? Math.round(pillPos) : -1
 
   return (
     <div className={`h-svh ${bg}`}>
@@ -122,6 +101,71 @@ function App() {
 
       <nav className="fixed bottom-0 left-0 right-0 z-50">
         <div className="px-3 pb-1">
+          {/* Lens bubble — appears on press, large oval above tab bar */}
+          {dragging && (
+            <div className="absolute z-40 pointer-events-none"
+              style={{
+                width: lensSize,
+                height: lensSize,
+                left: `calc(${(pressedIdx + 0.5) / TAB_COUNT * 100}% - ${lensSize / 2}px)`,
+                bottom: 48,
+                borderRadius: '50%',
+                background: darkMode ? 'rgba(30,30,35,0.3)' : 'rgba(255,255,255,0.15)',
+                backdropFilter: `blur(0.5px) brightness(${darkMode ? 1.9 : 1.12}) saturate(2)`,
+                WebkitBackdropFilter: `blur(0.5px) brightness(${darkMode ? 1.9 : 1.12}) saturate(2)`,
+                boxShadow: darkMode
+                  ? `inset 0 0 0 1.5px rgba(255,255,255,0.12),
+                     inset 0 1px 0 rgba(255,255,255,0.2),
+                     inset 0 -1px 0 rgba(255,255,255,0.04),
+                     0 0 0 1px rgba(0,0,0,0.4),
+                     0 8px 32px rgba(0,0,0,0.5),
+                     0 2px 8px rgba(0,0,0,0.3)`
+                  : `inset 0 0 0 1.5px rgba(255,255,255,0.5),
+                     inset 0 1px 0 rgba(255,255,255,0.8),
+                     0 0 0 1px rgba(0,0,0,0.05),
+                     0 8px 32px rgba(0,0,0,0.1),
+                     0 2px 8px rgba(0,0,0,0.06)`,
+                animation: 'lensIn 250ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Lens content — magnified icon */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1"
+                style={{ color: brightColor }}>
+                <span style={{ transform: 'scale(1.5)', display: 'flex' }}>
+                  {TABS[pressedIdx]?.filled}
+                </span>
+                <span style={{ fontSize: 11, fontWeight: 600 }}>
+                  {TABS[pressedIdx]?.label}
+                </span>
+              </div>
+              {/* Lens specular — top crescent highlight */}
+              <div className="absolute inset-0 pointer-events-none" style={{
+                background: darkMode
+                  ? 'radial-gradient(ellipse 90% 50% at 50% 15%, rgba(255,255,255,0.1) 0%, transparent 100%)'
+                  : 'radial-gradient(ellipse 90% 50% at 50% 15%, rgba(255,255,255,0.4) 0%, transparent 100%)',
+              }} />
+              {/* Lens edge refraction — subtle conic rainbow */}
+              <div className="absolute inset-0 pointer-events-none" style={{
+                borderRadius: '50%',
+                background: `conic-gradient(from 200deg,
+                  transparent 0deg,
+                  rgba(100,180,255,0.08) 40deg,
+                  rgba(160,100,255,0.06) 80deg,
+                  transparent 120deg,
+                  transparent 200deg,
+                  rgba(255,160,100,0.06) 240deg,
+                  rgba(255,100,140,0.07) 280deg,
+                  transparent 320deg)`,
+                mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                maskComposite: 'exclude',
+                WebkitMaskComposite: 'xor',
+                padding: 3,
+                filter: 'blur(1px)',
+              }} />
+            </div>
+          )}
+
           <div
             ref={containerRef}
             className="relative rounded-full select-none touch-none"
@@ -139,81 +183,49 @@ function App() {
             onPointerUp={onPointerUp}
             onPointerCancel={() => { setDragging(false); setDragProgress(null) }}
           >
-            {/* Outer container — subtle edge shimmer */}
-            <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-              background: `conic-gradient(from 150deg,
-                transparent 0deg,
-                rgba(140,200,255,0.04) 45deg,
-                transparent 90deg,
-                transparent 180deg,
-                rgba(255,160,140,0.03) 225deg,
-                transparent 270deg,
-                transparent 360deg)`,
-              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              maskComposite: 'exclude',
-              WebkitMaskComposite: 'xor',
-              padding: 1,
-            }} />
-            {/* Glass pill — morphs when pressed */}
+            {/* Glass pill indicator */}
             <div
               className="absolute left-0 pointer-events-none"
               style={{
                 width: `${pillWidthPct}%`,
-                top: dragging ? -5 : 3,
-                bottom: dragging ? -5 : 3,
-                transform: `translateX(${translateX}%) ${pillScale}`,
-                transition: dragging ? 'top 200ms, bottom 200ms' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), top 200ms, bottom 200ms',
+                top: 3, bottom: 3,
+                transform: `translateX(${translateX}%)`,
+                transition: dragging ? 'none' : 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }}
             >
-              <div className="absolute inset-x-[3px] inset-y-0 overflow-hidden"
+              <div className={`absolute inset-x-[${pillInsetX}] inset-y-0 overflow-hidden`}
                 style={{
                   borderRadius: 9999,
                   background: pillBg,
-                  backdropFilter: pillBlur,
-                  WebkitBackdropFilter: pillBlur,
-                  boxShadow: pillShadow,
-                  transition: dragging
-                    ? 'background 150ms, box-shadow 150ms, backdrop-filter 150ms'
-                    : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
+                  backdropFilter: pillBackdrop,
+                  WebkitBackdropFilter: pillBackdrop,
+                  boxShadow: darkMode
+                    ? `inset 0 0 0 1px rgba(255,255,255,0.08),
+                       inset 0 0.5px 0 rgba(255,255,255,0.12),
+                       0 0 0 0.5px rgba(0,0,0,0.2)`
+                    : `inset 0 0 0 1px rgba(255,255,255,0.4),
+                       inset 0 0.5px 0 rgba(255,255,255,0.7),
+                       0 0 0 0.5px rgba(0,0,0,0.03)`,
+                  transition: dragging ? 'none' : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
                 }}>
-                {/* Specular highlight — top white shine */}
-                <div className="absolute inset-x-0 top-0 h-[1px] pointer-events-none" style={{
+                <div className="absolute inset-x-0 top-0 h-[1px]" style={{
                   background: darkMode
-                    ? `linear-gradient(90deg, transparent 15%, rgba(255,255,255,${dragging ? 0.35 : 0.2}) 50%, transparent 85%)`
-                    : `linear-gradient(90deg, transparent 15%, rgba(255,255,255,${dragging ? 0.9 : 0.7}) 50%, transparent 85%)`,
-                }} />
-
-                {/* Convex lens center brightening */}
-                <div className="absolute inset-0 pointer-events-none" style={{
-                  background: `radial-gradient(ellipse 60% 70% at 50% 45%,
-                    rgba(255,255,255,${darkMode ? (dragging ? 0.05 : 0.02) : (dragging ? 0.1 : 0.05)}) 0%,
-                    transparent 100%)`,
+                    ? 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.2) 50%, transparent 85%)'
+                    : 'linear-gradient(90deg, transparent 15%, rgba(255,255,255,0.8) 50%, transparent 85%)',
                 }} />
               </div>
-
-              {/* Natural glass refraction — conic gradient border shimmer */}
-              <div className="absolute inset-x-[2px] inset-y-[-1px] pointer-events-none" style={{
-                borderRadius: 9999,
-                background: `conic-gradient(from ${dragging ? 200 : 210}deg,
-                  transparent 0deg,
-                  rgba(140,200,255,${dragging ? 0.2 : 0.08}) 30deg,
-                  rgba(170,140,255,${dragging ? 0.15 : 0.06}) 70deg,
-                  transparent 110deg,
-                  transparent 180deg,
-                  rgba(255,170,120,${dragging ? 0.15 : 0.06}) 220deg,
-                  rgba(255,120,160,${dragging ? 0.18 : 0.07}) 260deg,
-                  transparent 300deg,
-                  transparent 360deg)`,
-                mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-                maskComposite: 'exclude',
-                WebkitMaskComposite: 'xor',
-                padding: dragging ? 2 : 1.5,
-                filter: `blur(${dragging ? 1 : 0.5}px)`,
-                transition: dragging ? 'none' : 'all 600ms cubic-bezier(0.25, 1, 0.5, 1)',
-              }} />
             </div>
 
-            {/* Base icons (dim, outlined) */}
+            {/* Outer subtle edge shimmer */}
+            <div className="absolute inset-0 rounded-full pointer-events-none" style={{
+              background: `conic-gradient(from 150deg,
+                transparent 0deg, rgba(140,200,255,0.04) 45deg, transparent 90deg,
+                transparent 180deg, rgba(255,160,140,0.03) 225deg, transparent 270deg, transparent 360deg)`,
+              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+              maskComposite: 'exclude', WebkitMaskComposite: 'xor', padding: 1,
+            }} />
+
+            {/* Base icons */}
             <div className="relative flex">
               {TABS.map((t) => {
                 const isActive = tab === t.id
@@ -221,7 +233,11 @@ function App() {
                   <button key={t.id}
                     onClick={() => { if (!dragging) setTab(t.id) }}
                     className="flex-1 flex flex-col items-center justify-center gap-1 py-3 cursor-pointer relative z-10 select-none [-webkit-touch-callout:none] [-webkit-user-select:none]"
-                    style={{ color: isActive ? (darkMode ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.7)') : dimColor }}>
+                    style={{
+                      color: isActive ? (darkMode ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.7)') : dimColor,
+                      opacity: dragging && pressedIdx === TABS.indexOf(t) ? 0.4 : 1,
+                      transition: 'opacity 150ms',
+                    }}>
                     <span className="flex">{isActive ? t.filled : t.outlined}</span>
                     <span style={{ fontSize: 10, fontWeight: isActive ? 500 : 400, letterSpacing: '0.02em' }}>{t.label}</span>
                   </button>
@@ -229,11 +245,11 @@ function App() {
               })}
             </div>
 
-            {/* Magnified layer — clipped to pill, icons bigger + brighter */}
+            {/* Magnified layer clipped to pill */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full"
               style={{
-                clipPath: `inset(${dragging ? '0px' : '3px'} ${clipRight}% ${dragging ? '0px' : '3px'} ${clipLeft}% round 9999px)`,
-                transition: dragging ? 'clip-path 150ms' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
+                clipPath: `inset(3px ${clipRight}% 3px ${clipLeft}% round 9999px)`,
+                transition: dragging ? 'none' : 'clip-path 600ms cubic-bezier(0.25, 1, 0.5, 1)',
               }}>
               <div className="flex h-full">
                 {TABS.map((t) => (
@@ -248,6 +264,13 @@ function App() {
           </div>
         </div>
       </nav>
+
+      <style>{`
+        @keyframes lensIn {
+          0% { transform: scale(0.3); opacity: 0; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
     </div>
   )
 }
