@@ -59,7 +59,7 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
         </div>
       </div>
 
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-3 mb-10">
         <button onClick={toggle}
           className="px-8 py-2.5 rounded-full font-semibold text-base cursor-pointer transition-transform active:scale-95"
           style={{
@@ -78,8 +78,8 @@ export default function Timer({ darkMode }: { darkMode: boolean }) {
 
       <div className="flex flex-wrap justify-center gap-2">
         {PRESETS.map(sec => (
-          <button key={sec} onClick={() => pick(sec)}
-            className="px-5 py-2 rounded-full text-sm font-medium cursor-pointer transition-transform active:scale-95"
+          <button key={sec} onClick={() => { if (!running) pick(sec) }}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-transform ${running ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer active:scale-95'}`}
             style={chipStyle(darkMode, duration === sec && !running)}>
             {fmt(sec)}
           </button>
