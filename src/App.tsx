@@ -81,22 +81,36 @@ function App() {
   const pillBlur = dragging
     ? `brightness(${darkMode ? 8 : 3}) saturate(3) contrast(1.2)`
     : `brightness(${darkMode ? 6 : 2.5}) saturate(2.5) contrast(1.15)`
-  // Depth: strong layered shadows
+  // Glass thickness + refraction depth
   const pillShadow = darkMode
     ? (dragging
-      ? `inset 0 0 0 1.5px rgba(255,255,255,0.12),
-         inset 0 0.5px 0 rgba(255,255,255,0.2),
-         0 0 0 0.5px rgba(0,0,0,0.4)`
-      : `inset 0 0 0 1px rgba(255,255,255,0.08),
-         inset 0 0.5px 0 rgba(255,255,255,0.12),
-         0 0 0 0.5px rgba(0,0,0,0.2)`)
+      ? `inset 0 0 0 2.5px rgba(255,255,255,0.08),
+         inset 0 0 0 1px rgba(255,255,255,0.15),
+         inset 0 1px 2px rgba(255,255,255,0.12),
+         inset 0 -1px 2px rgba(0,0,0,0.2),
+         0 0 0 1px rgba(255,255,255,0.06),
+         0 2px 4px rgba(0,0,0,0.3),
+         0 4px 8px -2px rgba(0,0,0,0.2)`
+      : `inset 0 0 0 2px rgba(255,255,255,0.06),
+         inset 0 0 0 0.5px rgba(255,255,255,0.12),
+         inset 0 0.5px 1px rgba(255,255,255,0.08),
+         inset 0 -0.5px 1px rgba(0,0,0,0.1),
+         0 0 0 0.5px rgba(255,255,255,0.04),
+         0 1px 3px rgba(0,0,0,0.15)`)
     : (dragging
-      ? `inset 0 0 0 1.5px rgba(255,255,255,0.5),
-         inset 0 0.5px 0 rgba(255,255,255,0.8),
-         0 0 0 0.5px rgba(0,0,0,0.05)`
-      : `inset 0 0 0 1px rgba(255,255,255,0.35),
-         inset 0 0.5px 0 rgba(255,255,255,0.6),
-         0 0 0 0.5px rgba(0,0,0,0.03)`)
+      ? `inset 0 0 0 2.5px rgba(255,255,255,0.4),
+         inset 0 0 0 1px rgba(255,255,255,0.7),
+         inset 0 1px 2px rgba(255,255,255,0.5),
+         inset 0 -1px 2px rgba(0,0,0,0.04),
+         0 0 0 1px rgba(0,0,0,0.04),
+         0 2px 4px rgba(0,0,0,0.06),
+         0 4px 8px -2px rgba(0,0,0,0.04)`
+      : `inset 0 0 0 2px rgba(255,255,255,0.3),
+         inset 0 0 0 0.5px rgba(255,255,255,0.5),
+         inset 0 0.5px 1px rgba(255,255,255,0.4),
+         inset 0 -0.5px 1px rgba(0,0,0,0.02),
+         0 0 0 0.5px rgba(0,0,0,0.02),
+         0 1px 3px rgba(0,0,0,0.03)`)
 
   return (
     <div className={`h-svh ${bg}`}>
